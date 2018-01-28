@@ -1,11 +1,16 @@
 package cn.nj.storm.rpc.service.zk;
 
+import cn.nj.storm.rpc.util.CommonUtils;
 import org.apache.curator.framework.CuratorFramework;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
- * <一句话功能简述>
+ * <curator zk客户端接口实现>
  * <功能详细描述>
  *
  * @author zhengweishun
@@ -16,67 +21,75 @@ import org.springframework.stereotype.Service;
 @Service("curatorService")
 public class CuratorServiceImpl implements CuratorService
 {
-    private static final String ZK_PATH = "/zktest";
+    public static Logger logger = LoggerFactory.getLogger("run");
 
+    private static final String ZK_PATH = "/zktest";
+    
     @Autowired
     private CuratorFramework client;
-
+    
     @Override
     public void controll()
     {
         try
         {
-//            Thread.sleep(20000L);
-//            RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
+            // RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
             // 1.Connect to zk
-//            CuratorFramework client = CuratorFrameworkFactory.newClient(zkList, 5000, 3000, retryPolicy);
-
-//            client.start();
-//            System.out.println("zk client start successfully!");
-
+            // CuratorFramework client = CuratorFrameworkFactory.newClient(zkList, 5000, 3000, retryPolicy);
+            // client.start();
+            // System.out.println("zk client start successfully!");
+            
             // 2.Client API test
             // 2.1 Create node
             String data1 = "hello";
-            print("create", ZK_PATH, data1);
+            CommonUtils.print("create", ZK_PATH, data1);
             client.create().creatingParentsIfNeeded().forPath(ZK_PATH, data1.getBytes());
-
+            
             // 2.2 Get node and data
-            print("ls", "/");
-            print(client.getChildren().forPath("/"));
-            print("get", ZK_PATH);
-            print(client.getData().forPath(ZK_PATH));
-
+            CommonUtils.print("ls", "/");
+            CommonUtils.print(client.getChildren().forPath("/"));
+            CommonUtils.print("get", ZK_PATH);
+            CommonUtils.print(client.getData().forPath(ZK_PATH));
+            
             // 2.3 Modify data
             String data2 = "world";
-            print("set", ZK_PATH, data2);
+            CommonUtils.print("set", ZK_PATH, data2);
             client.setData().forPath(ZK_PATH, data2.getBytes());
-            print("get", ZK_PATH);
-            print(client.getData().forPath(ZK_PATH));
-
+            CommonUtils.print("get", ZK_PATH);
+            CommonUtils.print(client.getData().forPath(ZK_PATH));
+            
             // 2.4 Remove node
-            print("delete", ZK_PATH);
+            CommonUtils.print("delete", ZK_PATH);
             client.delete().forPath(ZK_PATH);
-            print("ls", "/");
-            print(client.getChildren().forPath("/"));
+            CommonUtils.print("ls", "/");
+            CommonUtils.print(client.getChildren().forPath("/"));
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
     }
-
-    private static void print(String... cmds)
+    
+    @Override
+    public List<String> znodeAll()
     {
-        StringBuilder text = new StringBuilder("$ ");
-        for (String cmd : cmds)
+        CommonUtils.print("ls", "/");
+        try
         {
-            text.append(cmd).append(" ");
+            String result = CommonUtils.convert2StringResult(client.getChildren().forPath("/"));
+            CommonUtils.print(result);
         }
-        System.out.println(text.toString());
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
-
-    private static void print(Object result)
+    
+    @Override
+    public List<String> znodesByParent(String parent)
     {
-        System.out.println(result instanceof byte[] ? new String((byte[])result) : result);
+        CommonUtils.print("ls", parent);
+        return null;
     }
 }
