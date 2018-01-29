@@ -43,11 +43,6 @@ public class ServiceRegistry
     
     private Map<String, Object> handlerMap = new HashMap<>();
     
-    private ServiceRegistry()
-    {
-        
-    }
-    
     @Bean
     public ServiceRegistry registry()
         throws Exception

@@ -1,5 +1,7 @@
 package cn.nj.storm.rpc.util;
 
+import java.util.ArrayList;
+
 /**
  * <一句话功能简述>
  * <功能详细描述>
@@ -23,7 +25,24 @@ public class CommonUtils
     
     public static String convert2StringResult(Object result)
     {
-        return result instanceof byte[] ? new String((byte[])result) : (String)result;
+        String responses = "";
+        if (result == null)
+        {
+            return null;
+        }
+        if (result instanceof ArrayList)
+        {
+            responses = result.toString();
+        }
+        else if (result instanceof byte[])
+        {
+            responses = new String((byte[])result);
+        }
+        else
+        {
+            responses = result.toString();
+        }
+        return responses;
     }
     
     public static void print(Object result)

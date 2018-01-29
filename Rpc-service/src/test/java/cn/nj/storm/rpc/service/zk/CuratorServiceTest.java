@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 /**
  * <一句话功能简述>
  * <功能详细描述>
@@ -22,12 +24,25 @@ public class CuratorServiceTest
 {
     @Autowired
     private CuratorService curatorService;
-
+    
     @Test
     public void controll()
         throws Exception
     {
         curatorService.controll();
     }
-    
+
+    @Test
+    public void list()
+    {
+        List<String> list = curatorService.znodeAll();
+        System.out.println(list);
+    }
+
+    @Test
+    public void listByParent()
+    {
+        List<String> list = curatorService.znodesByParent("/test");
+        System.out.println(list);
+    }
 }

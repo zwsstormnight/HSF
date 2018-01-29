@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ import java.util.List;
 public class CuratorServiceImpl implements CuratorService
 {
     public static Logger logger = LoggerFactory.getLogger("run");
-
+    
     private static final String ZK_PATH = "/zktest";
     
     @Autowired
@@ -73,23 +74,38 @@ public class CuratorServiceImpl implements CuratorService
     @Override
     public List<String> znodeAll()
     {
+        List<String> list = null;
         CommonUtils.print("ls", "/");
         try
         {
-            String result = CommonUtils.convert2StringResult(client.getChildren().forPath("/"));
-            CommonUtils.print(result);
+            Object object = client.getChildren().forPath("/");
+            //            String result = CommonUtils.convert2StringResult(object);
+            //            CommonUtils.print(result);
+            list = (ArrayList)object;
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        return null;
+        return list;
     }
     
     @Override
     public List<String> znodesByParent(String parent)
     {
         CommonUtils.print("ls", parent);
+        try
+        {
+            if (client.checkExists().forPath(parent) != null)
+            {
+                List<String> list = client.getChildren().forPath(parent);
+                return list;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         return null;
     }
 }

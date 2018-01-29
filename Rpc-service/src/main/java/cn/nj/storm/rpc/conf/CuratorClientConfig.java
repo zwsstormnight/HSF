@@ -3,6 +3,10 @@ package cn.nj.storm.rpc.conf;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.cache.ChildData;
+import org.apache.curator.framework.recipes.cache.TreeCache;
+import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
+import org.apache.curator.framework.recipes.cache.TreeCacheListener;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -11,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * <一句话功能简述>
@@ -107,5 +114,50 @@ public class CuratorClientConfig
                 }
             }
         });
+    }
+    
+    private static void setTreeCacheListenter(CuratorFramework client)
+        throws Exception
+    {
+        ExecutorService pool = Executors.newCachedThreadPool();
+        //设置节点的cache
+        TreeCache treeCache = new TreeCache(client, "/test");
+        //设置监听器和处理过程
+        treeCache.getListenable().addListener(new TreeCacheListener()
+        {
+            @Override
+            public void childEvent(CuratorFramework client, TreeCacheEvent event)
+                throws Exception
+            {
+                ChildData data = event.getData();
+                if (data != null)
+                {
+                    switch (event.getType())
+                    {
+                        case NODE_ADDED:
+                            System.out.println("NODE_ADDED : " + data.getPath() + "  数据:" + new String(data.getData()));
+                            break;
+                        case NODE_REMOVED:
+                            System.out
+                                .println("NODE_REMOVED : " + data.getPath() + "  数据:" + new String(data.getData()));
+                            break;
+                        case NODE_UPDATED:
+                            System.out
+                                .println("NODE_UPDATED : " + data.getPath() + "  数据:" + new String(data.getData()));
+                            break;
+                        
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    System.out.println("data is null : " + event.getType());
+                }
+            }
+        });
+        //开始监听
+        treeCache.start();
+        
     }
 }
