@@ -48,11 +48,16 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.12</version>
         </dependency>
-        <!-- Apache Commons Collections -->
+        <!-- Apache Commons -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
     </dependencies>
     <distributionManagement>
