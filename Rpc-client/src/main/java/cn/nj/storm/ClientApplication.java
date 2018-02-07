@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class App
+public class ClientApplication
 {
     private static final Logger logger = LoggerFactory.getLogger("interface");
 
@@ -18,14 +18,14 @@ public class App
         SLF4JBridgeHandler.install();
         //启动Spring Boot项目的入口
         logger.info("Rpc-client 程序启动");
-        SpringApplication.run(App.class, args);
+        SpringApplication.run(ClientApplication.class, args);
         logger.info("Rpc-client 程序已启动");
-        synchronized (App.class)
+        synchronized (ClientApplication.class)
         {
             while (true)
             {
                 System.out.println("........");
-                App.class.wait();
+                ClientApplication.class.wait();
             }
         }
     }

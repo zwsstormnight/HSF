@@ -1,6 +1,6 @@
 package cn.nj.storm.rpc.controller;
 
-import cn.nj.storm.App;
+import cn.nj.storm.ClientApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since [产品/模块版本]
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = App.class)
+@SpringBootTest(classes = ClientApplication.class)
 public class BaseControllerTest
 {
     @Test

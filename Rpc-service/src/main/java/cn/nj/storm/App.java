@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class App
 {
-    private static final Logger logger = LoggerFactory.getLogger("interface");
+    private static final Logger logger = LoggerFactory.getLogger("run");
 
     public static void main(String[] args)
             throws Exception
@@ -17,9 +17,9 @@ public class App
         //spring日志桥接
         SLF4JBridgeHandler.install();
         //启动Spring Boot项目的入口
-        logger.info("程序启动");
+        logger.info("Rpc-server 程序启动");
         SpringApplication.run(App.class, args);
-        logger.info("程序已启动");
+        logger.info("Rpc-server 程序已启动");
         synchronized (App.class)
         {
             while (true)

@@ -1,7 +1,6 @@
 package cn.nj.storm.rpc.service.nio;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -20,15 +19,32 @@ import java.util.Iterator;
  */
 public class NioServer
 {
-    private static final int BUF_SIZE = 1024;
+    private Selector selector;
     
-    private static final int PORT = 8080;
+    public NioServer(Selector selector)
+    {
+        this.selector = selector;
+    }
+    
+    private static final int BUF_SIZE = 1024;
     
     private static final int TIMEOUT = 3000;
     
-    public static void main(String[] args)
+    public void execute()
     {
-        selector();
+        new Worker().start();
+    }
+    
+    /**
+     *
+     */
+    private class Worker extends Thread
+    {
+        @Override
+        public void run()
+        {
+            channalListener();
+        }
     }
     
     public static void handleAccept(SelectionKey key)
@@ -49,11 +65,12 @@ public class NioServer
         while (bytesRead > 0)
         {
             buf.flip();
+            System.out.println("buffer start");
             while (buf.hasRemaining())
             {
                 System.out.print((char)buf.get());
             }
-            System.out.println();
+            System.out.println("      buffer end");
             buf.clear();
             bytesRead = sc.read(buf);
         }
@@ -76,23 +93,31 @@ public class NioServer
         buf.compact();
     }
     
-    public static void selector()
+    private void channalListener()
     {
-        Selector selector = null;
-        ServerSocketChannel ssc = null;
-        try
+        while (true)
         {
-            selector = Selector.open();
-            ssc = ServerSocketChannel.open();
-            ssc.socket().bind(new InetSocketAddress(PORT));
-            ssc.configureBlocking(false);
-            ssc.register(selector, SelectionKey.OP_ACCEPT);
-            
-            while (true)
+            /**
+             * 调用选择器的select()方法。该方法会阻塞等待，直到有一个或更多的信道准备好了I/O操作或等待超时
+             * select()方法将返回可进行I/O操作的信道数量。
+             * 现在，在一个单独的线程中，通过调用select()方法就能检查多个信道是否准备好进行I/O操作。
+             * 如果经过一段时间后仍然没有信道准备好，select()方法就会返回0，并允许程序继续执行其他任务。
+             */
+            /*
+             * 每次使用select时必须判断下selector是否已经被关闭，否则会报如下错误
+             * Exception in thread "pool-1-thread-1" java.nio.channels.ClosedSelectorException at sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:83)
+             */
+            if (!selector.isOpen())
+            {
+                System.out.println("selector is closed");
+                break;
+            }
+            try
             {
                 if (selector.select(TIMEOUT) == 0)
                 {
-                    System.out.println("==");
+                    //每3秒阻塞一次 如果没有信道准备好就循环等待
+                    System.out.println(Thread.currentThread().getName() + "==");
                     continue;
                 }
                 Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
@@ -116,25 +141,6 @@ public class NioServer
                         System.out.println("isConnectable = true");
                     }
                     iter.remove();
-                }
-            }
-            
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-                if (selector != null)
-                {
-                    selector.close();
-                }
-                if (ssc != null)
-                {
-                    ssc.close();
                 }
             }
             catch (IOException e)
