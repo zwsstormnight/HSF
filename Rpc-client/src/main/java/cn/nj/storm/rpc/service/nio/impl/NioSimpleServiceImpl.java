@@ -47,7 +47,7 @@ public class NioSimpleServiceImpl implements NioSimpleService
                  */
                 while (true)
                 {
-                    Thread.sleep(10);
+                    Thread.sleep(2000);
                     //消息体
                     String info = "I'm " + i++ + "-th information from client";
                     buffer.clear();

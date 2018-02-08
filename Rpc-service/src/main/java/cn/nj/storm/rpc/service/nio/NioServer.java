@@ -43,7 +43,14 @@ public class NioServer
         @Override
         public void run()
         {
-            channalListener();
+            try
+            {
+                channalListener();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -61,7 +68,14 @@ public class NioServer
     {
         SocketChannel sc = (SocketChannel)key.channel();
         ByteBuffer buf = (ByteBuffer)key.attachment();
+        System.out.println(sc.isConnected());
         long bytesRead = sc.read(buf);
+        if (bytesRead == -1)
+        {
+            System.out.println("断开..." + sc.socket().getRemoteSocketAddress());
+            sc.close();
+            return;
+        }
         while (bytesRead > 0)
         {
             buf.flip();
@@ -73,10 +87,6 @@ public class NioServer
             System.out.println("      buffer end");
             buf.clear();
             bytesRead = sc.read(buf);
-        }
-        if (bytesRead == -1)
-        {
-            sc.close();
         }
     }
     
@@ -94,6 +104,7 @@ public class NioServer
     }
     
     private void channalListener()
+        throws IOException
     {
         while (true)
         {
@@ -112,18 +123,18 @@ public class NioServer
                 System.out.println("selector is closed");
                 break;
             }
-            try
+            if (selector.select(TIMEOUT) == 0)
             {
-                if (selector.select(TIMEOUT) == 0)
+                //每3秒阻塞一次 如果没有信道准备好就循环等待
+                System.out.println(Thread.currentThread().getName() + ":" + selector.toString());
+                continue;
+            }
+            Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
+            while (iter.hasNext())
+            {
+                SelectionKey key = iter.next();
+                try
                 {
-                    //每3秒阻塞一次 如果没有信道准备好就循环等待
-                    System.out.println(Thread.currentThread().getName() + "==");
-                    continue;
-                }
-                Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
-                while (iter.hasNext())
-                {
-                    SelectionKey key = iter.next();
                     if (key.isAcceptable())
                     {
                         handleAccept(key);
@@ -140,12 +151,17 @@ public class NioServer
                     {
                         System.out.println("isConnectable = true");
                     }
-                    iter.remove();
                 }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    if (key != null)
+                    {
+                        key.cancel();
+                        key.channel().close();
+                    }
+                }
+                iter.remove();
             }
         }
     }
