@@ -45,7 +45,12 @@ public class EchoServer
         NioEventLoopGroup group = new NioEventLoopGroup();
         try
         {
-            //创建服务端的bootstrap
+            /**
+             * Netty 中配置程序的过程，当你需要连接客户端或服务器绑定指定端口时需要引导：创建服务端的bootstrap-->ServerBootstrap
+             * 监听在服务器某个指定端口并轮询客户端的Bootstrap或DatagramChannel是否连接服务器。
+             *
+             *
+             */
             ServerBootstrap b = new ServerBootstrap().group(group);
             //指定NIO传输channel为NioServerSocketChannel：信道类型,设定端口，
             b.channel(NioServerSocketChannel.class).localAddress(new InetSocketAddress(port)).childHandler(
@@ -56,13 +61,28 @@ public class EchoServer
                     public void initChannel(SocketChannel ch)
                         throws Exception
                     {
+                        /**
+                         * ChannelHandler:一个通用的容器，处理进来的事件（包括数据）并且通过ChannelPipeline
+                         *
+                         * 为了使数据从一端到达另一端，一个或多个 ChannelHandler 将以某种方式操作数据。
+                         * 这些 ChannelHandler 会在程序的“引导”阶段被添加ChannelPipeline中，并且被添加的顺序将决定处理数据的顺序
+                         */
                         ch.pipeline().addLast(new EchoServerHandler());
                     }
                 });
-            //绑定的服务器;sync():等待服务器关闭
+            /**
+             *
+             * 绑定的服务器;sync():等待服务器响应
+             * 通常需要调用“Bootstrap”类的connect()方法，但是也可以先调用bind()再调用connect()进行连接，之后使用的Channel包含在bind()返回的ChannelFuture中。
+             */
             ChannelFuture f = b.bind().sync();
+            /**
+             * 一个 ServerBootstrap 可以认为有2个 Channel 集合，
+             * 第一个集合包含一个单例 ServerChannel，代表持有一个绑定了本地端口的 socket；
+             * 第二集合包含所有创建的 Channel，处理服务器所接收到的客户端进来的连接
+             */
             System.out.println(EchoServer.class.getName() + " started and listen on " + f.channel().localAddress());
-            //关闭channel;sync():等待关闭
+            //关闭channel;sync():等待响应
             f.channel().closeFuture().sync();
         }
         finally

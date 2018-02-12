@@ -20,6 +20,19 @@ import io.netty.util.CharsetUtil;
 @ChannelHandler.Sharable
 public class EchoServerHandler extends ChannelInboundHandlerAdapter
 {
+    /**
+     * Netty 中有两个方向的数据流，
+     * 若数据是从用户应用程序到远程主机则是“出站(outbound)”--写，
+     * 相反若数据从远程主机到用户应用程序则是“入站(inbound)”--读
+     *
+     *
+     *
+     *
+     *
+     * 实际上，在 Netty 发送消息有两种方式。您可以直接写消息给 Channel 或写入 ChannelHandlerContext 对象。
+     * 主要的区别是，
+     * 写消息给 Channel会导致消息从 ChannelPipeline的尾部开始，而 写入 ChannelHandlerContext导致消息从 ChannelPipeline 下一个处理器开始。
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
     {
