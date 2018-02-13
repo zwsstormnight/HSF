@@ -3,7 +3,7 @@
     <contextName>Rpc-server</contextName>
     <property name="config.dir" value="." />
     <property name="app" value="nettyRpc" />
-    <property name="module" value="Rpc-service" />
+    <property name="module" value="Rpc-client" />
     <conversionRule conversionWord="ip" converterClass="cn.nj.storm.rpc.conf.IpConvert" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
