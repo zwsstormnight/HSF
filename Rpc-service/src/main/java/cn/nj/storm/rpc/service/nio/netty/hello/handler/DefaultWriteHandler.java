@@ -1,12 +1,9 @@
 package cn.nj.storm.rpc.service.nio.netty.hello.handler;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
-import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 
 /**
@@ -37,10 +34,7 @@ public class DefaultWriteHandler extends ChannelOutboundHandlerAdapter
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise)
     {
         System.out.println(this.getClass().getSimpleName() + " write");
-//        byte[] req = messages.getBytes();//消息
-//        ByteBuf firstMessage = Unpooled.buffer(req.length);//发送类
-//        firstMessage.writeBytes(messages);//发送
-        ctx.writeAndFlush(messages);//flush
+        ctx.writeAndFlush(messages);
         ReferenceCountUtil.release(msg);
         promise.setSuccess();
     }

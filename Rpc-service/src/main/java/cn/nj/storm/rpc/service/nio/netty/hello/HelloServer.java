@@ -40,7 +40,6 @@ public class HelloServer
             b.channel(NioServerSocketChannel.class)
                 .localAddress(new InetSocketAddress(port))
                 .childHandler(new HelloChannelInitializer());
-            
             ChannelFuture f = b.bind().sync();
             System.out.println(this.getClass().getName() + " started and listen on " + f.channel().localAddress());
             //关闭channel;sync():等待响应
@@ -63,6 +62,6 @@ class HelloChannelInitializer extends ChannelInitializer<SocketChannel>
         p.addLast("decoder", new StringDecoder());
         p.addLast("encoder", new StringEncoder());
         p.addLast(new DefaultReadHandler("收到"));
-//        p.addLast(new DefaultWriteHandler("111111111"));
+        //        p.addLast(new DefaultWriteHandler("111111111"));
     }
 }

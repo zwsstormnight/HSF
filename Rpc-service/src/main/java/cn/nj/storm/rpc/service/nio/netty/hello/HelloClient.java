@@ -1,7 +1,8 @@
 package cn.nj.storm.rpc.service.nio.netty.hello;
 
-import cn.nj.storm.rpc.service.nio.netty.hello.handler.DefaultReadHandler;
 import cn.nj.storm.rpc.service.nio.netty.hello.handler.DefaultWriteHandler;
+import cn.nj.storm.rpc.service.nio.netty.hello.handler.client.ClientReadHandler;
+import cn.nj.storm.rpc.service.nio.netty.hello.handler.client.ClientWriteHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -65,8 +66,9 @@ public class HelloClient
                         ChannelPipeline cp = ch.pipeline();
                         cp.addLast("decoder", new StringDecoder());
                         cp.addLast("encoder", new StringEncoder());
-                        cp.addLast(new DefaultWriteHandler("请求"));
-                        cp.addLast(new DefaultReadHandler("callback"));
+                        //ChannelOutboundHandler 在注册的时候需要放在最后一个ChannelInboundHandler之前，否则将无法传递到ChannelOutboundHandler。
+                        cp.addLast(new ClientWriteHandler());
+                        cp.addLast(new ClientReadHandler("callback"));
                     }
                 });
             

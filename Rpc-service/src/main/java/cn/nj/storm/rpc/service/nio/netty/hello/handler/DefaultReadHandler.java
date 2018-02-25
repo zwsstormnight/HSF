@@ -24,15 +24,22 @@ public class DefaultReadHandler extends ChannelInboundHandlerAdapter
     {
         this.messages = msg;
     }
-    
+
+    /**
+     * @param ctx
+     * @throws Exception
+     */
     @Override
     public void channelActive(ChannelHandlerContext ctx)
         throws Exception
     {
         System.out.println(this.getClass().getSimpleName() + " channelActive");
+        //ChannelInboundHandler之间的传递，通过调用 ctx.fireChannelRead(msg) 实现
         ctx.fireChannelActive();
-        //将已获得的连接告知客户端
+        //调用ctx.write(msg) 将传递到ChannelOutboundHandler
         ctx.write(messages);
+        //ctx.write()方法执行后，需要调用flush()方法才能令它立即执行
+        ctx.flush();
     }
     
     @Override
@@ -52,15 +59,23 @@ public class DefaultReadHandler extends ChannelInboundHandlerAdapter
             ByteBuf byteBuf = (ByteBuf)msg;
             m = m + byteBuf.toString(CharsetUtil.UTF_8);
             //将所接收的消息返回给发送者
-            ctx.write(byteBuf);
+            ctx.writeAndFlush(byteBuf);
         }
         else
         {
             m = m + msg;
             //将所接收的消息返回给发送者
-            ctx.write(msg);
+            ctx.writeAndFlush(msg);
         }
         System.out.println(m);
+    }
+    
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx)
+        throws Exception
+    {
+        System.out.println(this.getClass().getSimpleName() + " channelReadComplete");
+        ctx.flush();
     }
     
     @Override
@@ -68,5 +83,30 @@ public class DefaultReadHandler extends ChannelInboundHandlerAdapter
     {
         cause.printStackTrace();
         ctx.close();
+    }
+    
+    private String ctxMessages(ChannelHandlerContext ctx)
+    {
+        try
+        {
+            ByteBuf byteBuf = ctx.alloc().buffer();
+            byte[] array = null;
+            if (!byteBuf.hasArray())
+            {
+                int length = byteBuf.readableBytes();
+                array = new byte[length];
+                byteBuf.getBytes(byteBuf.readerIndex(), array);
+            }
+            else
+            {
+                array = byteBuf.array();
+            }
+            return byteBuf.toString(CharsetUtil.UTF_8);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
