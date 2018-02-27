@@ -24,6 +24,7 @@ public class ClientWriteHandler extends ChannelOutboundHandlerAdapter
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise)
     {
         System.out.println(this.getClass().getSimpleName() + " write");
+        ctx.alloc().buffer().clear();
         ctx.writeAndFlush((String)msg + isd++);
         ReferenceCountUtil.release(msg);
         promise.setSuccess();
