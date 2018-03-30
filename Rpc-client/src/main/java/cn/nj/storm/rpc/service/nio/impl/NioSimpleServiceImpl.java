@@ -34,7 +34,7 @@ public class NioSimpleServiceImpl implements NioSimpleService
              * 例如，在一个非阻塞式ServerSocketChannel上调用accept()方法，如果有连接请求来了，则返回客户端SocketChannel，否则返回null。
              */
             socketChannel.configureBlocking(false);
-            socketChannel.connect(new InetSocketAddress("127.0.0.1", 8080));
+            socketChannel.connect(new InetSocketAddress("127.0.0.1", 18089));
             
             if (socketChannel.finishConnect())
             {

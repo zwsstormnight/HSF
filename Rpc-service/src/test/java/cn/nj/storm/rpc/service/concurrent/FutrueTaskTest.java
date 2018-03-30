@@ -21,7 +21,7 @@ public class FutrueTaskTest
             pool = Executors.newCachedThreadPool();
             //Future用于异步线程获取返回结果
             pool.submit(new Thread2());
-//            pool.awaitTermination(10000, TimeUnit.MILLISECONDS);
+            //            pool.awaitTermination(10000, TimeUnit.MILLISECONDS);
         }
         catch (Exception e)
         {
@@ -44,7 +44,7 @@ class Thread1 implements Callable
     public Object call()
         throws Exception
     {
-        return new Exception("a haaaaaaaaaaaaa");
+        return new Exception("Thread1");
     }
 }
 
@@ -53,6 +53,22 @@ class Thread2 implements Runnable
     @Override
     public void run()
     {
-//        throw new Exception("a haaaaaaaaaaaaa");
+//        throw new Exception("Thread2");
+    }
+}
+
+class Thread3 implements Runnable
+{
+    @Override
+    public void run()
+    {
+        try
+        {
+            throw new Exception("Thread3");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
