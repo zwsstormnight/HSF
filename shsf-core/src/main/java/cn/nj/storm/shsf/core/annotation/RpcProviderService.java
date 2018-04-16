@@ -22,6 +22,10 @@ import java.lang.annotation.Target;
 @Component
 public @interface RpcProviderService
 {
+    /**
+     * 接口实例类别
+     * @return
+     */
     Class<?> value() default Object.class;
 
     /**
