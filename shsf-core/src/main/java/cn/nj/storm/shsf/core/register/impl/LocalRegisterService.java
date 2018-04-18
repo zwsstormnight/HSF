@@ -1,6 +1,7 @@
 package cn.nj.storm.shsf.core.register.impl;
 
 import cn.nj.storm.shsf.core.annotation.RpcProviderService;
+import cn.nj.storm.shsf.core.utill.AnnotationUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -24,28 +25,27 @@ public class LocalRegisterService extends AbstractRegisterService {
 
     private String appAddress;
 
-    public static LocalRegisterService getInstance(String registerRoot)
-    {
+    public static LocalRegisterService getInstance(String registerRoot) {
         INSTANCE.namespace = registerRoot;
         return INSTANCE;
     }
 
-    private LocalRegisterService()
-    {
+    private LocalRegisterService() {
 
     }
 
-    @Autowired
-    private ApplicationContext applicationContext;
+//    @Autowired
+//    private ApplicationContext applicationContext;
 
     @Override
-    public String register()
-    {
-        Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(RpcProviderService.class);
-        if (MapUtils.isNotEmpty(serviceBeanMap))
-        {
-
-        }
+    public String register() {
+        System.out.println("start regist");
+        AnnotationUtils.getServices("cn.nj.storm", RpcProviderService.class);
+//        Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(RpcProviderService.class);
+//        if (MapUtils.isNotEmpty(serviceBeanMap))
+//        {
+//
+//        }
         return null;
     }
 }
