@@ -12,6 +12,7 @@
     <modules>
         <module>shsf-applications</module>
         <module>shsf-core</module>
+        <module>shsf-rpc</module>
     </modules>
     <packaging>pom</packaging>
 
