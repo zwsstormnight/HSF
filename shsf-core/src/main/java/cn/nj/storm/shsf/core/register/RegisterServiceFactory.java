@@ -24,9 +24,10 @@ public class RegisterServiceFactory {
     private RegisterServiceFactory() {
     }
 
-    public static RegisterServiceFactory getInstance(String name, String centre) {
+    public static RegisterServiceFactory getInstance(Package scannerPackage, String name, String centre) {
         INSTANCE.appName = name;
         INSTANCE.registerCentre = centre;
+        INSTANCE.scannerPackage = scannerPackage;
         try {
             INSTANCE.localhost = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
@@ -41,6 +42,8 @@ public class RegisterServiceFactory {
     private String registerCentre;
 
     private String localhost;
+
+    private Package scannerPackage;
 
     public RegisterService create() {
         RegisterService registerService = null;
@@ -57,7 +60,7 @@ public class RegisterServiceFactory {
         } else if (registerCentre.equals(DefConstants.CLUSTER)) {
 
         }
-        registerService.register();
+        registerService.register(scannerPackage.getName());
         return registerService;
     }
 }

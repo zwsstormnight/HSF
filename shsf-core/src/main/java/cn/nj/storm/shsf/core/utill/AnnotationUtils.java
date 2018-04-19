@@ -1,9 +1,14 @@
 package cn.nj.storm.shsf.core.utill;
 
+import cn.nj.storm.shsf.core.annotation.RpcMethod;
+import cn.nj.storm.shsf.core.annotation.RpcProviderService;
+import cn.nj.storm.shsf.core.entity.MethodConfig;
+import cn.nj.storm.shsf.core.entity.ServiceConfig;
+import org.apache.commons.collections4.CollectionUtils;
 import org.reflections.Reflections;
-import org.springframework.stereotype.Controller;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,19 +28,44 @@ import java.util.Set;
 public class AnnotationUtils {
 
     /**
-     * 获取指定目录下的指定注解的类
+     * <获取指定目录下的指定注解的类>
      *
      * @param packageName
      * @return
      */
-    public static Set<Class<?>> getServices(String packageName, Class clazz) {
+    public static Set<ServiceConfig> getServices(String packageName, Class clazz) {
         Reflections reflections = new Reflections(packageName);
         Set<Class<?>> classesList = reflections.getTypesAnnotatedWith(clazz);
+        Set<ServiceConfig> serviceConfigs = new HashSet<>();
         for (Class<?> serviceClass : classesList) {
-            System.out.println(serviceClass.getAnnotation(clazz));
-            System.out.println("000000000000000000");
+            RpcProviderService rpcProviderService = (RpcProviderService) serviceClass.getAnnotation(clazz);
+            ServiceConfig serviceConfig = new ServiceConfig();
+            serviceConfig.setName(rpcProviderService.name());
+//            serviceConfig.setValueName();
+            serviceConfig.setClazz(rpcProviderService.value());
+            serviceConfig.setRetries(rpcProviderService.retries());
+            serviceConfig.setTimeout(rpcProviderService.timeout());
+            serviceConfigs.add(serviceConfig);
         }
+        return serviceConfigs;
+    }
 
-        return classesList;
+    public static Set<MethodConfig> getMethods(ServiceConfig serviceConfig) {
+        Set<MethodConfig> methodConfigSet = new HashSet<>();
+        Set<MethodConfig> annoedMethods = new HashSet<>();
+        Method[] methods = serviceConfig.getClazz().getMethods();
+        int methodSize = methods.length;
+        if (methodSize > 0) {
+            for (Method mt : methods) {
+                MethodConfig methodConfig = new MethodConfig();
+                methodConfig.setName(mt.getName());
+                methodConfig.setReturnType(mt.getReturnType());
+                if (mt.getAnnotation(RpcMethod.class) != null) {
+                    annoedMethods.add(methodConfig);
+                }
+                methodConfigSet.add(methodConfig);
+            }
+        }
+        return CollectionUtils.isEmpty(annoedMethods) ? methodConfigSet : annoedMethods;
     }
 }
