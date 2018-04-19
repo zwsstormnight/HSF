@@ -1,10 +1,8 @@
 package cn.nj.storm.shsf.core.annotation;
 
 import cn.nj.storm.shsf.core.conf.register.ShsfAutoConfig;
-import cn.nj.storm.shsf.core.utill.DefConstants;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import cn.nj.storm.shsf.core.utill.Constants;
 import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
 
@@ -33,7 +31,7 @@ public @interface AutoShsfConfiguration
      * <默认根结点名称>
      * @return
      */
-    String name() default DefConstants.SHSF_NAME;
+    String name() default Constants.SHSF_NAME;
 
     /**
      * <注册中心类别>
@@ -44,6 +42,6 @@ public @interface AutoShsfConfiguration
      *  EUREKA
      *  NON: 无中心化注册
      */
-    String centre() default DefConstants.LOCAL;
+    String centre() default Constants.LOCAL;
 
 }

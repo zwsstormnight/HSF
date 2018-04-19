@@ -9,7 +9,7 @@ package cn.nj.storm.shsf.core.utill;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface DefConstants
+public interface Constants
 {
     /**
      * 连接超时时间 单位毫秒
@@ -77,4 +77,7 @@ public interface DefConstants
 
     }
 
+    String PROVIDER = "provider";
+
+    String CONSUMER = "consumer";
 }

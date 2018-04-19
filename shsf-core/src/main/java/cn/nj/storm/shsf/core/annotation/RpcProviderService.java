@@ -1,6 +1,6 @@
 package cn.nj.storm.shsf.core.annotation;
 
-import cn.nj.storm.shsf.core.utill.DefConstants;
+import cn.nj.storm.shsf.core.utill.Constants;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
@@ -38,11 +38,11 @@ public @interface RpcProviderService
      * 请求重试次数 默认3次
      * @return
      */
-    int retries() default DefConstants.RETRY_TIMES;
+    int retries() default Constants.RETRY_TIMES;
 
     /**
      * 连接超时时间 默认是3000毫秒
      * @return
      */
-    int timeout() default DefConstants.CONNECTION_TIMEOUT;
+    int timeout() default Constants.CONNECTION_TIMEOUT;
 }

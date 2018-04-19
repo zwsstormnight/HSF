@@ -11,19 +11,23 @@ import cn.nj.storm.shsf.core.register.RegisterService;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public abstract class AbstractRegisterService implements RegisterService {
-    public AbstractRegisterService() {
-
+public abstract class AbstractRegisterService implements RegisterService
+{
+    public AbstractRegisterService()
+    {
+        
     }
-
-    public AbstractRegisterService(String registerRoot) {
+    
+    public AbstractRegisterService(String registerRoot)
+    {
         this.registerRoot = registerRoot;
     }
-
+    
     private String registerRoot;
-
+    
     @Override
-    public String register(String packageName) {
+    public String register(String packageName)
+    {
         return null;
     }
 }
