@@ -11,4 +11,6 @@ package cn.nj.storm.shsf.core.register.impl;
  */
 public class DbRegisterService extends AbstractRegisterService
 {
+    public DbRegisterService(String appName) {
+    }
 }

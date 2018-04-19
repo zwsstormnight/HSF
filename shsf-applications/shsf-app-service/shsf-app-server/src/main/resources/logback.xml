@@ -4,7 +4,7 @@
     <property name="config.dir" value="." />
     <property name="app" value="nettyRpc" />
     <property name="module" value="Rpc-service" />
-    <conversionRule conversionWord="ip" converterClass="cn.nj.storm.rpc.conf.IpConvert" />
+    <conversionRule conversionWord="ip" converterClass="cn.nj.storm.shsf.app.server.conf.IpConvert" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned by default the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->

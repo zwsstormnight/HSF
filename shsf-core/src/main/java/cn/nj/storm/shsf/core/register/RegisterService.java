@@ -9,7 +9,6 @@ package cn.nj.storm.shsf.core.register;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface RegisterService
-{
-    String register();
+public interface RegisterService {
+    String register(String packageName);
 }
