@@ -13,16 +13,17 @@ import cn.nj.storm.shsf.core.utill.LoggerInterface;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@RpcProviderService(IHappyService.class)
-public class IHappyServiceImpl implements IHappyService,LoggerInterface {
-
+@RpcProviderService(name = "iHappyService", value = IHappyServiceImpl.class, interfaceClass = IHappyService.class)
+public class IHappyServiceImpl implements IHappyService, LoggerInterface
+{
+    
     @Override
     public String makeHappy(String name)
     {
         interfaceLogger.info("make happy name:" + name);
         return this.toString() + ":" + name;
     }
-
+    
     @Override
     public void happyName()
     {

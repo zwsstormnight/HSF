@@ -52,20 +52,20 @@ public class LocalRegisterService extends AbstractRegisterService
         for (ServiceConfig service : services)
         {
             //接口全名
-            String serviceName = service.getClazz().getName();
-            //拼接URL
-            //TODO shsf://127.0.0.1:62338?interface=&retries=&timeout=&type=&methods=
+            String serviceName = service.getInterfaceName();
+            //拼接URL shsf://127.0.0.1:62338?interface=&retries=&timeout=&type=&methods=
+            String params = service.toUrlParam() + "&methods=";
             Map<String, List<String>> typeMap = new HashMap<>();
             List<String> list = new ArrayList<>();
             for (MethodConfig methodConfig : serviceMethods.get(service.getName()))
             {
-                methodConfig.getName();
-                //TODO 拼接method信息
+                params += (methodConfig.getName() + ",");
             }
+            list.add(params);
             typeMap.put(service.getServiceType(), list);
             map.put(serviceName, typeMap);
         }
         regMap.put(INSTANCE.namespace, map);
-        return null;
+        return regMap.toString();
     }
 }

@@ -16,9 +16,11 @@ public class ServiceConfig
     
     private String name;
     
-    private String valueName;
+    private String interfaceName;
     
-    private Class<?> clazz;
+    private Class<?> interfaceClass;
+    
+    private Class<?> implementClass;
     
     private int retries;
     
@@ -44,24 +46,34 @@ public class ServiceConfig
         this.name = name;
     }
     
-    public String getValueName()
+    public String getInterfaceName()
     {
-        return valueName;
+        return interfaceName;
     }
     
-    public void setValueName(String valueName)
+    public void setInterfaceName(String interfaceName)
     {
-        this.valueName = valueName;
+        this.interfaceName = interfaceName;
     }
     
-    public Class<?> getClazz()
+    public Class<?> getInterfaceClass()
     {
-        return clazz;
+        return interfaceClass;
     }
     
-    public void setClazz(Class<?> clazz)
+    public void setInterfaceClass(Class<?> interfaceClass)
     {
-        this.clazz = clazz;
+        this.interfaceClass = interfaceClass;
+    }
+    
+    public Class<?> getImplementClass()
+    {
+        return implementClass;
+    }
+    
+    public void setImplementClass(Class<?> implementClass)
+    {
+        this.implementClass = implementClass;
     }
     
     public int getRetries()
@@ -87,13 +99,14 @@ public class ServiceConfig
     @Override
     public String toString()
     {
-        return "ServiceConfig{" + "serviceType='" + serviceType + '\'' + ", name='" + name + '\'' + ", valueName='"
-            + valueName + '\'' + ", clazz=" + clazz + ", retries=" + retries + ", timeout=" + timeout + '}';
+        return "ServiceConfig{" + "serviceType='" + serviceType + '\'' + ", name='" + name + '\'' + ", interfaceName='"
+            + interfaceName + '\'' + ", interfaceClass=" + interfaceClass + ", implementClass=" + implementClass
+            + ", retries=" + retries + ", timeout=" + timeout + '}';
     }
     
     public String toUrlParam()
     {
         //interface=&retries=&timeout=&type=&methods=
-        return "interface="+clazz.getName()+"&retries="+retries+"&timeout="+timeout+"&type="+serviceType;
+        return "interface=" + interfaceName + "&retries=" + retries + "&timeout=" + timeout + "&type=" + serviceType;
     }
 }

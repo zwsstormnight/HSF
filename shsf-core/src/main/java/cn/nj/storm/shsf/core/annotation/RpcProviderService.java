@@ -29,6 +29,18 @@ public @interface RpcProviderService
     Class<?> value() default Object.class;
 
     /**
+     * 接口类别
+     * @return
+     */
+    Class<?> interfaceClass() default void.class;
+
+    /**
+     * 接口版本
+     * @return
+     */
+    String version() default "1.0.0";
+
+    /**
      * 注册接口名称
      * @return
      */

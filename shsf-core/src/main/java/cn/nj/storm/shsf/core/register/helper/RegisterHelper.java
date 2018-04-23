@@ -6,6 +6,7 @@ import cn.nj.storm.shsf.core.annotation.RpcProviderService;
 import cn.nj.storm.shsf.core.entity.MethodConfig;
 import cn.nj.storm.shsf.core.entity.ServiceConfig;
 import cn.nj.storm.shsf.core.utill.AnnotationUtils;
+import cn.nj.storm.shsf.core.utill.CombinUtils;
 import cn.nj.storm.shsf.core.utill.Constants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -52,13 +53,14 @@ public class RegisterHelper
             ServiceConfig serviceConfig = new ServiceConfig();
             //接口类别
             serviceConfig.setServiceType(Constants.PROVIDER);
-            //接口代理名称
-            String name = rpcProviderService.name();
-            serviceConfig.setName(StringUtils.isNotEmpty(name) ? name : name);
             //接口名称
-            serviceConfig.setValueName(rpcProviderService.value().getSimpleName());
-            //接口所属类
-            serviceConfig.setClazz(rpcProviderService.value());
+            serviceConfig.setInterfaceName(rpcProviderService.interfaceClass().getName());
+            //接口代理名称
+            serviceConfig.setName(rpcProviderService.name());
+            //接口类
+            serviceConfig.setInterfaceClass(rpcProviderService.interfaceClass());
+            //实现类
+            serviceConfig.setImplementClass(rpcProviderService.value());
             serviceConfig.setRetries(rpcProviderService.retries());
             serviceConfig.setTimeout(rpcProviderService.timeout());
             serviceConfigs.add(serviceConfig);
@@ -69,8 +71,10 @@ public class RegisterHelper
             ServiceConfig serviceConfig = new ServiceConfig();
             serviceConfig.setServiceType(Constants.CONSUMER);
             serviceConfig.setName(rpcConsumerService.name());
-            serviceConfig.setValueName(rpcConsumerService.value().getSimpleName());
-            serviceConfig.setClazz(rpcConsumerService.value());
+//          //接口类
+            serviceConfig.setInterfaceClass(rpcConsumerService.interfaceClass());
+            //实现类
+            serviceConfig.setImplementClass(rpcConsumerService.value());
             serviceConfig.setRetries(rpcConsumerService.retries());
             serviceConfig.setTimeout(rpcConsumerService.timeout());
             serviceConfigs.add(serviceConfig);
@@ -101,7 +105,7 @@ public class RegisterHelper
     {
         Set<MethodConfig> methodConfigSet = new HashSet<>();
         Set<MethodConfig> annoedMethods = new HashSet<>();
-        Method[] methods = serviceConfig.getClazz().getMethods();
+        Method[] methods = serviceConfig.getImplementClass().getMethods();
         int methodSize = methods.length;
         if (methodSize > 0)
         {
