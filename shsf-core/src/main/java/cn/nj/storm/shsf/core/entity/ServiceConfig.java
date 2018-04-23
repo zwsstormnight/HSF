@@ -90,4 +90,10 @@ public class ServiceConfig
         return "ServiceConfig{" + "serviceType='" + serviceType + '\'' + ", name='" + name + '\'' + ", valueName='"
             + valueName + '\'' + ", clazz=" + clazz + ", retries=" + retries + ", timeout=" + timeout + '}';
     }
+    
+    public String toUrlParam()
+    {
+        //interface=&retries=&timeout=&type=&methods=
+        return "interface="+clazz.getName()+"&retries="+retries+"&timeout="+timeout+"&type="+serviceType;
+    }
 }

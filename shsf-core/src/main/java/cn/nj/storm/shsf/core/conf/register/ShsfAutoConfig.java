@@ -20,22 +20,25 @@ import java.util.Map;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class ShsfAutoConfig {
+public class ShsfAutoConfig
+{
     @Autowired
     private ApplicationContext applicationContext;
-
+    
     @Bean
     public RegisterService initFactory()
-            throws Exception {
+        throws Exception
+    {
         Map<String, Object> appBeanMap = applicationContext.getBeansWithAnnotation(AutoShsfConfiguration.class);
-        if (MapUtils.isNotEmpty(appBeanMap)) {
+        if (MapUtils.isNotEmpty(appBeanMap))
+        {
             Object appBean = appBeanMap.values().iterator().next();
             Class startClass = appBean.getClass();
             //获取注解对象
-            AutoShsfConfiguration conf =
-                    AnnotationUtils.findAnnotation(startClass, AutoShsfConfiguration.class);
+            AutoShsfConfiguration conf = AnnotationUtils.findAnnotation(startClass, AutoShsfConfiguration.class);
             //当注册注解不为空 并且 注解为可注册配置
-            if (conf != null && conf.autoRegister()) {
+            if (conf != null && conf.autoRegister())
+            {
                 return RegisterServiceFactory.getInstance(startClass.getPackage(), conf.name(), conf.centre()).create();
             }
         }

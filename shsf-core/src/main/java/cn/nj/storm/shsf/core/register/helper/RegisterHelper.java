@@ -9,6 +9,7 @@ import cn.nj.storm.shsf.core.utill.AnnotationUtils;
 import cn.nj.storm.shsf.core.utill.Constants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -49,9 +50,14 @@ public class RegisterHelper
         {
             RpcProviderService rpcProviderService = serviceClass.getAnnotation(RpcProviderService.class);
             ServiceConfig serviceConfig = new ServiceConfig();
+            //接口类别
             serviceConfig.setServiceType(Constants.PROVIDER);
-            serviceConfig.setName(rpcProviderService.name());
+            //接口代理名称
+            String name = rpcProviderService.name();
+            serviceConfig.setName(StringUtils.isNotEmpty(name) ? name : name);
+            //接口名称
             serviceConfig.setValueName(rpcProviderService.value().getSimpleName());
+            //接口所属类
             serviceConfig.setClazz(rpcProviderService.value());
             serviceConfig.setRetries(rpcProviderService.retries());
             serviceConfig.setTimeout(rpcProviderService.timeout());
