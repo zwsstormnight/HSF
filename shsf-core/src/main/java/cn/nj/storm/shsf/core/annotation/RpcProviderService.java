@@ -3,10 +3,7 @@ package cn.nj.storm.shsf.core.annotation;
 import cn.nj.storm.shsf.core.utill.Constants;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * <rpc服务生产者注解 >
@@ -17,6 +14,7 @@ import java.lang.annotation.Target;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
+@Documented
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Component
