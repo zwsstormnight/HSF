@@ -61,7 +61,9 @@ public class RegisterHelper
             serviceConfig.setInterfaceClass(rpcProviderService.interfaceClass());
             //实现类
             serviceConfig.setImplementClass(rpcProviderService.value());
+            //重试次数
             serviceConfig.setRetries(rpcProviderService.retries());
+            //单次请求超时时长
             serviceConfig.setTimeout(rpcProviderService.timeout());
             serviceConfigs.add(serviceConfig);
         }

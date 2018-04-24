@@ -24,7 +24,10 @@ public class LocalRegisterService extends AbstractRegisterService
     private String namespace;
     
     private String appAddress;
-    
+
+    /**
+     * 本地注册容器
+     */
     private static Map<String, Map<String, Map<String, List<String>>>> regMap;
     
     public static LocalRegisterService getInstance(String registerRoot)
