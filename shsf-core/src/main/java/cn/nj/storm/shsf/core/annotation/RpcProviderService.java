@@ -1,8 +1,6 @@
 package cn.nj.storm.shsf.core.annotation;
 
 import cn.nj.storm.shsf.core.utill.Constants;
-import org.springframework.stereotype.Component;
-
 import java.lang.annotation.*;
 
 /**
@@ -17,7 +15,6 @@ import java.lang.annotation.*;
 @Documented
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Component
 public @interface RpcProviderService
 {
     /**

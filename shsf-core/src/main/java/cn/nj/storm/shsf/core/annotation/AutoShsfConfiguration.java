@@ -3,11 +3,10 @@ package cn.nj.storm.shsf.core.annotation;
 import cn.nj.storm.shsf.core.conf.register.ShsfAutoConfig;
 import cn.nj.storm.shsf.core.utill.Constants;
 import org.springframework.context.annotation.Import;
-
 import java.lang.annotation.*;
 
 /**
- * <一句话功能简述>
+ * <SHSF自动装配注解>
  * <功能详细描述>
  *
  * @author zhengweishun

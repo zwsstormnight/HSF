@@ -1,7 +1,5 @@
 package cn.nj.storm.shsf.core.annotation;
 
-import java.lang.reflect.Method;
-
 /**
  * <一句话功能简述>
  * <功能详细描述>

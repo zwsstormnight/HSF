@@ -39,7 +39,7 @@ public interface Constants
     /**
      * zookeeper注册
      */
-    String ZK = "Zk";
+    String ZOOKEEPER = "Zookeeper";
 
     /**
      * redis注册

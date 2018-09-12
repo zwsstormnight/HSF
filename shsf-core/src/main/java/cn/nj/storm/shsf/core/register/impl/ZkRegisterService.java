@@ -1,19 +1,18 @@
 package cn.nj.storm.shsf.core.register.impl;
 
 import cn.nj.storm.shsf.core.annotation.RpcProviderService;
-import cn.nj.storm.shsf.core.conf.CuratorClientConfig;
 import cn.nj.storm.shsf.core.utill.LoggerInterface;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <zookeeper注册实现>
@@ -25,7 +24,8 @@ import java.util.Map;
  * @since [产品/模块版本]
  */
 public class ZkRegisterService extends AbstractRegisterService implements LoggerInterface {
-    @Value("${service.name.space}")
+
+    @Value("${service.name.space}:#{null}")
     private String namespace;
 
     @Value("${app.serverLists}")
@@ -34,14 +34,18 @@ public class ZkRegisterService extends AbstractRegisterService implements Logger
     @Autowired
     private ApplicationContext applicationContext;
 
-    public ZkRegisterService() {
-
+    private static class SingletonHolder {
+        public final static ZkRegisterService INSTANCE = new ZkRegisterService();
     }
 
-    public ZkRegisterService(String registerRoot) {
-        if (StringUtils.isBlank(namespace)) {
-            namespace = registerRoot;
-        }
+    private ZkRegisterService() {
+    }
+
+    public static ZkRegisterService getInstance(String appName)
+    {
+        SingletonHolder.INSTANCE.namespace = appName;
+        //TODO 初始化CuratorFramework
+        return SingletonHolder.INSTANCE;
     }
 
     @Override

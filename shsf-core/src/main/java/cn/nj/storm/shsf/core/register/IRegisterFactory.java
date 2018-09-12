@@ -1,7 +1,7 @@
 package cn.nj.storm.shsf.core.register;
 
 /**
- * <服务注册接口>
+ * <服务注册器工厂>
  * <功能详细描述>
  *
  * @author zhengweishun
@@ -9,13 +9,13 @@ package cn.nj.storm.shsf.core.register;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface RegisterService {
+public interface IRegisterFactory {
 
     /**
-     * 注册
-     * @param packageName
+     * 创建注册业务实例
+     * @param registerCentre
      * @return
      */
-    String register(String packageName);
+    RegisterService create(String registerCentre);
 
 }

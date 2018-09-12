@@ -16,4 +16,12 @@
         <module>shsf-app-api</module>
         <module>shsf-app-server</module>
     </modules>
+
+    <dependencies>
+        <!-- spring -->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter</artifactId>-->
+        <!--</dependency>-->
+    </dependencies>
 </project>
