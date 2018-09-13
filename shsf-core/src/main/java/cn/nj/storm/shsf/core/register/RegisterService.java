@@ -12,10 +12,20 @@ package cn.nj.storm.shsf.core.register;
 public interface RegisterService {
 
     /**
-     * 注册
+     * 扫描
+     *
      * @param packageName
      * @return
      */
-    String register(String packageName);
+    RegisterService scanner(String packageName);
+
+    /**
+     * 注册
+     *
+     * @param appName
+     * @param appAddress
+     * @return
+     */
+    String register(String appName, String appAddress);
 
 }

@@ -13,9 +13,11 @@ public interface IRegisterFactory {
 
     /**
      * 创建注册业务实例
+     * @param scannerPackage
+     * @param appName
      * @param registerCentre
      * @return
      */
-    RegisterService create(String registerCentre);
+    RegisterService create(Package scannerPackage, String appName, String registerCentre);
 
 }

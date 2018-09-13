@@ -8,6 +8,9 @@ import cn.nj.storm.shsf.core.register.impl.SimpleRegisterService;
 import cn.nj.storm.shsf.core.register.impl.ZkRegisterService;
 import cn.nj.storm.shsf.core.utill.Constants;
 import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -23,51 +26,44 @@ import java.util.Enumeration;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
+@Service
 public class AbstractRegisterFactory implements IRegisterFactory, LoggerInterface {
 
-    private static class SingletonHolder {
-        public final static AbstractRegisterFactory INSTANCE = new AbstractRegisterFactory();
-    }
-
-    private AbstractRegisterFactory() {
-    }
-
-    public static AbstractRegisterFactory getInstance(Package scannerPackage, String appName) {
-        AbstractRegisterFactory.SingletonHolder.INSTANCE.scannerPackage = scannerPackage;
-        AbstractRegisterFactory.SingletonHolder.INSTANCE.appName = appName;
-        AbstractRegisterFactory.SingletonHolder.INSTANCE.localAddress = getLocalInetAddress();
-        return AbstractRegisterFactory.SingletonHolder.INSTANCE;
-    }
-
+    /**
+     * 服务名称
+     */
     protected String appName;
 
+    /**
+     * 当前服务的ip
+     */
     protected InetAddress localAddress;
 
+    /**
+     * 扫描的包路径
+     */
     protected Package scannerPackage;
 
+    /**
+     * 注册服务
+     */
     public RegisterService registerService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Override
-    public RegisterService create(String registerCentre) {
-        switch (registerCentre) {
-            case Constants.ZOOKEEPER:
-                registerService = ZkRegisterService.getInstance(appName);
-                break;
-            case Constants.EUREKA:
-                registerService = EurekaRegisterService.getInstance(appName);
-                break;
-            case Constants.CLUSTER:
-                registerService = ClusterRegisterService.getInstance(appName);
-                break;
-            default:
-                registerService = SimpleRegisterService.getInstance(appName);
-                break;
-        }
-        registerService.register(scannerPackage.getName());
+    public RegisterService create(Package scannerPackage, String appName, String registerCentre) {
+        this.scannerPackage = scannerPackage;
+        this.appName = appName;
+        this.localAddress = getLocalInetAddress();
+        registerService = (RegisterService) applicationContext.getBean(registerCentre);
+        registerService.scanner(scannerPackage.getName());
+        registerService.register(appName, this.localAddress.getHostAddress());
         return registerService;
     }
 
-    private static InetAddress getLocalInetAddress() {
+    public static InetAddress getLocalInetAddress() {
         try {
             Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
             InetAddress inetAddress = null;
@@ -88,15 +84,5 @@ public class AbstractRegisterFactory implements IRegisterFactory, LoggerInterfac
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        try {
-            InetAddress inetAddress = getLocalInetAddress();
-            System.out.println(inetAddress);
-            System.out.println(InetAddress.getLocalHost().getHostAddress());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

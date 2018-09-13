@@ -8,6 +8,7 @@ import cn.nj.storm.shsf.core.entity.ServiceConfig;
 import cn.nj.storm.shsf.core.utill.AnnotationUtils;
 import cn.nj.storm.shsf.core.utill.CombinUtils;
 import cn.nj.storm.shsf.core.utill.Constants;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -89,7 +90,7 @@ public class RegisterHelper
      */
     public static Map<String, Set<MethodConfig>> scannerMethods(Set<ServiceConfig> services)
     {
-        Map<String, Set<MethodConfig>> methodMap = new HashMap<>();
+        Map<String, Set<MethodConfig>> methodMap = Maps.newHashMap();
         if (CollectionUtils.isNotEmpty(services))
         {
             for (ServiceConfig serviceConfig : services)
@@ -105,7 +106,7 @@ public class RegisterHelper
     {
         Set<MethodConfig> methodConfigSet = new HashSet<>();
         Set<MethodConfig> annoedMethods = new HashSet<>();
-        Method[] methods = serviceConfig.getImplementClass().getMethods();
+        Method[] methods = serviceConfig.getImplementClass().getDeclaredMethods();
         int methodSize = methods.length;
         if (methodSize > 0)
         {

@@ -3,8 +3,10 @@ package cn.nj.storm.shsf.core.register.impl;
 import cn.nj.storm.shsf.core.entity.MethodConfig;
 import cn.nj.storm.shsf.core.entity.ServiceConfig;
 import cn.nj.storm.shsf.core.register.helper.RegisterHelper;
+import cn.nj.storm.shsf.core.utill.Constants;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -17,22 +19,23 @@ import java.util.*;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
+//@Service(value = Constants.LOCAL)
 public class SimpleRegisterService extends AbstractRegisterService
 {
 
-    private static class SingletonHolder {
-        public final static SimpleRegisterService INSTANCE = new SimpleRegisterService();
-    }
-
-    private SimpleRegisterService() {
-    }
-
-    public static SimpleRegisterService getInstance(String appName)
-    {
-        SingletonHolder.INSTANCE.namespace = appName;
-        regMap = Maps.newHashMap();
-        return SingletonHolder.INSTANCE;
-    }
+//    private static class SingletonHolder {
+//        public final static SimpleRegisterService INSTANCE = new SimpleRegisterService();
+//    }
+//
+//    private SimpleRegisterService() {
+//    }
+//
+//    public static SimpleRegisterService getInstance(String appName)
+//    {
+//        SingletonHolder.INSTANCE.namespace = appName;
+//        regMap = Maps.newHashMap();
+//        return SingletonHolder.INSTANCE;
+//    }
     
 //    @Override
 //    public String register(String packageName)

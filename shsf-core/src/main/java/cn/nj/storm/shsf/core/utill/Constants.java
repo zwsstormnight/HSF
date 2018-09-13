@@ -27,6 +27,11 @@ public interface Constants
     String SHSF_NAME = "shsf";
 
     /**
+     * 默认协议
+     */
+    String SHSF_PROTOCAL = "shsf";
+
+    /**
      * 本地 不做注册机制
      */
     String LOCAL = "Local";

@@ -5,6 +5,7 @@ import cn.nj.storm.shsf.core.entity.ServiceConfig;
 import cn.nj.storm.shsf.core.register.RegisterService;
 import cn.nj.storm.shsf.core.register.helper.RegisterHelper;
 import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
@@ -18,41 +19,44 @@ import java.util.*;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public abstract class AbstractRegisterService implements RegisterService,LoggerInterface
-{
+public abstract class AbstractRegisterService implements RegisterService, LoggerInterface {
+
     protected String namespace;
 
     protected String appAddress;
 
-    protected static Map<String, Map<String, Map<String, List<String>>>> regMap;
+    /**
+     * 本地服务存储位置
+     */
+    protected static Map<String, Map<String, List<String>>> regMap;
 
     @Override
-    public String register(String packageName)
-    {
+    public RegisterService scanner(String packageName) {
         Set<ServiceConfig> services = RegisterHelper.scannerInterfaces(packageName);
-        if (CollectionUtils.isEmpty(services))
-        {
-            return null;
+        if (CollectionUtils.isEmpty(services)) {
+            return this;
         }
         Map<String, Set<MethodConfig>> serviceMethods = RegisterHelper.scannerMethods(services);
-        Map<String, Map<String, List<String>>> map = new HashMap<>();
-        for (ServiceConfig service : services)
-        {
+        regMap = Maps.newHashMap();
+        for (ServiceConfig service : services) {
             //接口全名
             String serviceName = service.getInterfaceName();
             //拼接URL shsf://127.0.0.1:62338?interface=&retries=&timeout=&type=&methods=
             String params = service.toUrlParam() + "&methods=";
-            Map<String, List<String>> typeMap = new HashMap<>();
+            Map<String, List<String>> typeMap = Maps.newHashMap();
             List<String> list = new ArrayList<>();
-            for (MethodConfig methodConfig : serviceMethods.get(service.getName()))
-            {
+            for (MethodConfig methodConfig : serviceMethods.get(service.getName())) {
                 params += (methodConfig.getName() + ",");
             }
             list.add(params);
             typeMap.put(service.getServiceType(), list);
-            map.put(serviceName, typeMap);
+            regMap.put(serviceName, typeMap);
         }
-        regMap.put(namespace, map);
+        return this;
+    }
+
+    @Override
+    public String register(String appName, String appAddress) {
         return regMap.toString();
     }
 }

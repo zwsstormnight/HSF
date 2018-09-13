@@ -1,6 +1,7 @@
 package cn.nj.storm;
 
 import cn.nj.storm.shsf.core.annotation.AutoShsfConfiguration;
+import cn.nj.storm.shsf.core.annotation.ShsfApplication;
 import cn.nj.storm.shsf.core.utill.Constants;
 import cn.nj.storm.shsf.core.utill.LoggerInterface;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -12,7 +13,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author zwsst
  */
 @SpringBootApplication
-@AutoShsfConfiguration(name = "rpc-server", centre = Constants.ZOOKEEPER)
+@AutoShsfConfiguration(centre = Constants.ZOOKEEPER)
+//@ShsfApplication(name = "rpc-server", centre = Constants.ZOOKEEPER)
 public class App implements LoggerInterface {
     public static void main(String[] args)
             throws Exception {

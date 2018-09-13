@@ -1,9 +1,11 @@
 package cn.nj.storm.shsf.core.conf.zookeeper;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <一句话功能简述>
@@ -18,5 +20,30 @@ import java.util.List;
 @ConfigurationProperties(prefix = "shsf.zookeeper")
 public class ZookeeperProperties {
 
-    private List<String> serverLists;
+    private String serverLists;
+
+    /**
+     * Is Zookeeper enabled
+     */
+    private boolean enabled = false;
+
+    private Integer baseSleepTimeMilliseconds;
+
+    private Integer maxRetries;
+
+    private Integer maxSleepTimeMilliseconds;
+
+    private Integer maxSessionTimeoutMilliseconds;
+
+    private Integer maxConnectTimeoutMilliseconds;
+
+    /**
+     * Wait time to block on connection to Zookeeper
+     */
+    private Integer blockUntilConnectedWait = 10;
+
+    /**
+     * The unit of time related to blocking on connection to Zookeeper
+     */
+    private TimeUnit blockUntilConnectedUnit = TimeUnit.SECONDS;
 }
