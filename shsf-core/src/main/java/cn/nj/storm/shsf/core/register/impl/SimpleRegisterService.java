@@ -1,17 +1,23 @@
 package cn.nj.storm.shsf.core.register.impl;
 
-import cn.nj.storm.shsf.core.entity.MethodConfig;
-import cn.nj.storm.shsf.core.entity.ServiceConfig;
-import cn.nj.storm.shsf.core.register.helper.RegisterHelper;
 import cn.nj.storm.shsf.core.utill.Constants;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NODE_REMOVED;
 
 /**
- * <本地>
+ * <本地注册服务机制的维护>
  * <功能详细描述>
  *
  * @author zhengweishun
@@ -22,48 +28,48 @@ import java.util.*;
 //@Service(value = Constants.LOCAL)
 public class SimpleRegisterService extends AbstractRegisterService
 {
-
-//    private static class SingletonHolder {
-//        public final static SimpleRegisterService INSTANCE = new SimpleRegisterService();
-//    }
-//
-//    private SimpleRegisterService() {
-//    }
-//
-//    public static SimpleRegisterService getInstance(String appName)
-//    {
-//        SingletonHolder.INSTANCE.namespace = appName;
-//        regMap = Maps.newHashMap();
-//        return SingletonHolder.INSTANCE;
-//    }
     
-//    @Override
-//    public String register(String packageName)
-//    {
-//        Set<ServiceConfig> services = RegisterHelper.scannerInterfaces(packageName);
-//        if (CollectionUtils.isEmpty(services))
-//        {
-//            return null;
-//        }
-//        Map<String, Set<MethodConfig>> serviceMethods = RegisterHelper.scannerMethods(services);
-//        Map<String, Map<String, List<String>>> map = new HashMap<>();
-//        for (ServiceConfig service : services)
-//        {
-//            //接口全名
-//            String serviceName = service.getInterfaceName();
-//            //拼接URL shsf://127.0.0.1:62338?interface=&retries=&timeout=&type=&methods=
-//            String params = service.toUrlParam() + "&methods=";
-//            Map<String, List<String>> typeMap = new HashMap<>();
-//            List<String> list = new ArrayList<>();
-//            for (MethodConfig methodConfig : serviceMethods.get(service.getName()))
-//            {
-//                params += (methodConfig.getName() + ",");
-//            }
-//            list.add(params);
-//            typeMap.put(service.getServiceType(), list);
-//            map.put(serviceName, typeMap);
-//        }
-//        regMap.put(SingletonHolder.INSTANCE.namespace, map);
-//        return regMap.toString();
-//    }
+    /**
+     * 事件发生类别
+     *
+     * @param type
+     * @param path
+     * @param dataStr
+     */
+    public static void cache(TreeCacheEvent.Type type, String path, String dataStr)
+    {
+        if (StringUtils.isBlank(dataStr))
+        {
+            return;
+        }
+        //拆解当前的路径
+        List<String> pathNodes = Splitter.on('/').trimResults().omitEmptyStrings().splitToList(path);
+        if (!pathNodes.contains(Constants.PROVIDER))
+        {
+            return;
+        }
+        //接口名
+        String interfaceName = pathNodes.get(0);
+        //接口提供方ip
+        String serverAddress = pathNodes.get(pathNodes.size() - 1);
+        //服务提供者信息
+        List<Map<String, Object>> existsInfos = ListUtils.emptyIfNull(totalServices.get(interfaceName));
+        Predicate<Map<String, Object>> isInServer = (map) -> map.containsKey(serverAddress);
+        //服务列表不为空并且是删除操作
+        if (type.equals(NODE_REMOVED))
+        {
+            existsInfos.removeAll(existsInfos.stream().filter(isInServer).collect(Collectors.toList()));
+        }
+        else
+        {
+            List<String> pathInfos = Splitter.on('?').trimResults().omitEmptyStrings().splitToList(dataStr);
+            System.out.println(pathInfos);
+            Map<String, Object> m = Maps.newHashMap();
+//            m.put(serverAddress, dataStr);
+//            existsInfos.add(m);
+        }
+        //TODO 解析接口详细信息
+        totalServices.put(interfaceName, existsInfos);
+        System.out.println(totalServices);
+    }
 }

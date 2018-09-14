@@ -96,6 +96,7 @@ public class RegisterHelper
             for (ServiceConfig serviceConfig : services)
             {
                 Set<MethodConfig> methodConfigs = RegisterHelper.getMethods(serviceConfig);
+                serviceConfig.setMethodConfigs(methodConfigs);
                 methodMap.put(serviceConfig.getName(), methodConfigs);
             }
         }

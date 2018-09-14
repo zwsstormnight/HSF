@@ -1,5 +1,6 @@
 package cn.nj.storm.shsf.core.conf.zookeeper;
 
+import cn.nj.storm.shsf.core.register.impl.SimpleRegisterService;
 import cn.nj.storm.shsf.core.utill.Constants;
 import cn.nj.storm.shsf.core.utill.LoggerInterface;
 import org.apache.curator.RetryPolicy;
@@ -7,10 +8,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.TreeCache;
-import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
-import org.apache.curator.framework.recipes.cache.TreeCacheListener;
 import org.apache.curator.framework.state.ConnectionState;
-import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -50,11 +48,13 @@ public class CuratorClientConfig implements LoggerInterface {
                 sessionTimeoutMs(properties.getMaxSessionTimeoutMilliseconds()).
                 connectionTimeoutMs(properties.getMaxConnectTimeoutMilliseconds()).
                 retryPolicy(retryPolicy).
+                namespace(Constants.SHSF_NAME).
                 build();
         client.start();
         System.out.println("zk client start successfully!");
-        connectionState = "CONNECTED";
-        addListener(retryPolicy, properties);
+//        connectionState = "CONNECTED";
+//        addListener(retryPolicy, properties);
+        setTreeCacheListenter(client);
         return client;
     }
 
@@ -87,34 +87,28 @@ public class CuratorClientConfig implements LoggerInterface {
         });
     }
 
-    private static void setTreeCacheListenter(CuratorFramework client)
-            throws Exception {
+    /**
+     * 订阅默认空间的目录
+     * @param client
+     */
+    private void setTreeCacheListenter(CuratorFramework client) {
         //设置节点的cache
-        TreeCache treeCache = new TreeCache(client, "/test");
+        TreeCache treeCache = new TreeCache(client, "/");
         //设置监听器和处理过程
         treeCache.getListenable().addListener((client1, event) -> {
             ChildData data = event.getData();
             if (data != null) {
-                switch (event.getType()) {
-                    case NODE_ADDED:
-                        System.out.println("NODE_ADDED : " + data.getPath() + "  数据:" + new String(data.getData()));
-                        break;
-                    case NODE_REMOVED:
-                        System.out
-                                .println("NODE_REMOVED : " + data.getPath() + "  数据:" + new String(data.getData()));
-                        break;
-                    case NODE_UPDATED:
-                        System.out
-                                .println("NODE_UPDATED : " + data.getPath() + "  数据:" + new String(data.getData()));
-                        break;
-                    default:
-                        break;
-                }
+                String dataStr = data.getData() != null ? new String(data.getData()) : "";
+                System.out.println(event.getType()+ ": " + data.getPath() + "  数据:" + dataStr);
+                SimpleRegisterService.cache(event.getType(), data.getPath(), dataStr);
             } else {
                 System.out.println("data is null : " + event.getType());
             }
         });
-        //开始监听
-        treeCache.start();
+        try {
+            treeCache.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
