@@ -9,7 +9,6 @@
         <module>shsf-applications</module>
         <module>shsf-core</module>
         <module>shsf-rpc</module>
-        <module>shsf-spring</module>
     </modules>
     <packaging>pom</packaging>
 
