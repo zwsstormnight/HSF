@@ -1,5 +1,6 @@
 package cn.nj.storm.shsf.core.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Set;

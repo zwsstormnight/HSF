@@ -9,6 +9,8 @@
         <module>shsf-applications</module>
         <module>shsf-core</module>
         <module>shsf-rpc</module>
+        <module>shsf-common</module>
+        <module>spring-boot-starter-shsf</module>
     </modules>
     <packaging>pom</packaging>
 

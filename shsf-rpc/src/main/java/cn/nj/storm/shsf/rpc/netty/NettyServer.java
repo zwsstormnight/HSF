@@ -1,19 +1,16 @@
 package cn.nj.storm.shsf.rpc.netty;
 
+import cn.nj.storm.shsf.rpc.RpcServerFactory;
 import cn.nj.storm.shsf.rpc.netty.handler.DefaultReadHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
 
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 
 /**
  * <一句话功能简述>
@@ -28,11 +25,13 @@ public class NettyServer
 {
     
     /**
-     *
+     * 启动netty服务
      * @param port
      */
+//    @Override
     public void startServer(int port)
     {
+        System.out.println("NettyServer");
         NioEventLoopGroup group = new NioEventLoopGroup();
         try
         {

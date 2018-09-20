@@ -39,6 +39,12 @@
             <artifactId>shsf-core</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <!-- shsf rpc -->
+        <dependency>
+            <groupId>cn.nj.storm</groupId>
+            <artifactId>shsf-rpc</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
         <!-- app api -->
         <dependency>
             <groupId>cn.nj.storm</groupId>

@@ -7,12 +7,18 @@ import cn.nj.storm.shsf.core.entity.MethodConfig;
 import cn.nj.storm.shsf.core.entity.ServiceConfig;
 import org.apache.commons.collections4.CollectionUtils;
 import org.reflections.Reflections;
+import org.reflections.scanners.FieldAnnotationsScanner;
+import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ConfigurationBuilder;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * <注解工具类>
@@ -30,6 +36,10 @@ import java.util.Set;
  */
 public class AnnotationUtils
 {
+    private AnnotationUtils()
+    {
+        
+    }
     
     /**
      * <获取指定目录下的指定注解的类>
@@ -37,14 +47,51 @@ public class AnnotationUtils
      * @param packageName
      * @return
      */
-    public static Map<String, Set<Class<?>>> getServices(String packageName)
+    public static Map<String, Set<Class<?>>> getServices(String packageName, Class<? extends Annotation>... annotations)
     {
         Map<String, Set<Class<?>>> map = new HashMap<>(2);
         Reflections reflections = new Reflections(packageName);
+        //                Arrays.stream(annotations).map(annotation -> reflections.getTypesAnnotatedWith(annotation)).collect(
+        //                    Collectors.toMap(Collectors.groupingBy(Annotation::SERVICE_TYPE));
+        //获取服务提供者的列表
         Set<Class<?>> providerClasses = reflections.getTypesAnnotatedWith(RpcProviderService.class);
+        //获取服务消费者的列表
         Set<Class<?>> consumerClasses = reflections.getTypesAnnotatedWith(RpcConsumerService.class);
         map.put(Constants.PROVIDER, providerClasses);
         map.put(Constants.CONSUMER, consumerClasses);
         return map;
+    }
+    
+    /**
+     * <获取指定目录下的指定注解的类>
+     *
+     * @param packageName
+     * @return
+     */
+    public static <T extends Annotation> List<T> getAnnotationInstanceOnType(String packageName, Class<T> annotation)
+    {
+        Reflections reflections = new Reflections(packageName);
+        //获取服务提供者的列表
+        Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(annotation);
+        List<T> providerServices =
+            classSet.stream().map(clazz -> clazz.getAnnotation(annotation)).collect(Collectors.toList());
+        return providerServices;
+    }
+    
+    /**
+     * 获取指定目录下指定注释的字段
+     * @param packageName
+     * @param annotation
+     * @param <T>
+     * @return
+     */
+    public static <T extends Annotation> List<T> getAnnotationInstanceOnField(String packageName, Class<T> annotation)
+    {
+        Reflections reflections = new Reflections(
+            new ConfigurationBuilder().setScanners(new FieldAnnotationsScanner()).forPackages(packageName));
+        Set<Field> fieldSet = reflections.getFieldsAnnotatedWith(RpcConsumerService.class);
+        List<T> consumerServices =
+            fieldSet.stream().map(field -> field.getAnnotation(annotation)).collect(Collectors.toList());
+        return consumerServices;
     }
 }

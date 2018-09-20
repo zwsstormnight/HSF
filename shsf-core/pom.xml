@@ -20,6 +20,14 @@
     </properties>
 
     <dependencies>
+        <!-- rpc -->
+        <dependency>
+            <groupId>cn.nj.storm</groupId>
+            <artifactId>shsf-rpc</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- spring boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -32,10 +40,23 @@
             <version>1.16.16</version>
             <scope>provided</scope>
         </dependency>
+        <!-- 反射 -->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.10</version>
+        </dependency>
+
+        <!-- Protostuff -->
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+            <version>1.6.0</version>
         </dependency>
     </dependencies>
 </project>

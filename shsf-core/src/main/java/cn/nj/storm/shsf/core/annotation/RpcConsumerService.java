@@ -17,7 +17,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
+//@Component
 public @interface RpcConsumerService {
 
     /**
@@ -55,4 +55,9 @@ public @interface RpcConsumerService {
      * @return
      */
     int timeout() default Constants.CONNECTION_TIMEOUT;
+
+    /**
+     * 服务接口类别
+     */
+    String SERVICE_TYPE = Constants.CONSUMER;
 }

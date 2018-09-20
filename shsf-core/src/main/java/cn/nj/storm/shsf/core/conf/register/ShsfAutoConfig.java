@@ -4,7 +4,9 @@ import cn.nj.storm.shsf.core.annotation.AutoShsfConfiguration;
 import cn.nj.storm.shsf.core.register.IRegisterFactory;
 import cn.nj.storm.shsf.core.register.RegisterService;
 import cn.nj.storm.shsf.core.register.factory.AbstractRegisterFactory;
+import cn.nj.storm.shsf.core.register.impl.AbstractRegisterService;
 import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.rpc.RpcServerFactory;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -28,7 +30,7 @@ public class ShsfAutoConfig implements LoggerInterface {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private IRegisterFactory registerFactory;
+    private ShsfProperties shsfProperties;
 
     @PostConstruct
     public void init() {
@@ -44,8 +46,13 @@ public class ShsfAutoConfig implements LoggerInterface {
                  * 这里需要尝试使用工厂的机制创建：registerFactory.create(startClass.getPackage(), conf.name(), conf.centre()) 这样也行;
                  */
                 RegisterService registerService = (RegisterService) applicationContext.getBean(conf.centre());
+                //扫描
                 registerService.scanner(startClass.getPackage().getName());
+                //注册到注册中心
                 registerService.register(conf.name(), AbstractRegisterFactory.getLocalInetAddress().getHostAddress());
+                //启动服务模式：netty/mina/rmi
+                RpcServerFactory factory = new RpcServerFactory();
+                factory.startServer(Integer.parseInt(shsfProperties.getPort()));
             }
         }
     }
