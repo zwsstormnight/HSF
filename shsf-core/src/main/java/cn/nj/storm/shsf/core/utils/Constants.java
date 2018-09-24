@@ -1,4 +1,4 @@
-package cn.nj.storm.shsf.core.utill;
+package cn.nj.storm.shsf.core.utils;
 
 /**
  * <默认常量类>

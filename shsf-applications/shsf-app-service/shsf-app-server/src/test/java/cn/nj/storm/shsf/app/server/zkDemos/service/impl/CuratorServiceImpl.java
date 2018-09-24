@@ -2,7 +2,7 @@ package cn.nj.storm.shsf.app.server.zkDemos.service.impl;
 
 import cn.nj.storm.shsf.app.server.zkDemos.service.CuratorService;
 import cn.nj.storm.shsf.app.server.zkDemos.utils.CommonUtils;
-import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.beans.factory.annotation.Autowired;
 

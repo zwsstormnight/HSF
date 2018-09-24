@@ -1,10 +1,9 @@
 package cn.nj.storm.shsf.core.conf.register;
 
-import cn.nj.storm.shsf.core.annotation.AutoShsfConfiguration;
 import cn.nj.storm.shsf.core.annotation.ShsfApplication;
 import cn.nj.storm.shsf.core.register.IRegisterFactory;
 import cn.nj.storm.shsf.core.register.factory.SimpleRegisterFactory;
-import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

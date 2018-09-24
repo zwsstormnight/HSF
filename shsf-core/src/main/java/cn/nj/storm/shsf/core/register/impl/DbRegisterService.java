@@ -1,6 +1,6 @@
 package cn.nj.storm.shsf.core.register.impl;
 
-import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 
 /**
  * <数据库注册实现>

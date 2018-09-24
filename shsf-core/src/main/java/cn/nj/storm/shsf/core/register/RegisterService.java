@@ -12,7 +12,7 @@ package cn.nj.storm.shsf.core.register;
 public interface RegisterService {
 
     /**
-     * 扫描
+     * 扫描 当前包名称路径下的所有符合的
      *
      * @param packageName
      * @return

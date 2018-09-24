@@ -2,7 +2,7 @@ package cn.nj.storm.shsf.core.annotation;
 
 import cn.nj.storm.shsf.core.conf.register.ShsfAutoConfig;
 import cn.nj.storm.shsf.core.conf.register.ShsfProperties;
-import cn.nj.storm.shsf.core.utill.Constants;
+import cn.nj.storm.shsf.core.utils.Constants;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import java.lang.annotation.*;

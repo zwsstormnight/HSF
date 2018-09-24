@@ -1,23 +1,14 @@
-package cn.nj.storm.shsf.core.utill;
+package cn.nj.storm.shsf.core.utils;
 
 import cn.nj.storm.shsf.core.annotation.RpcConsumerService;
-import cn.nj.storm.shsf.core.annotation.RpcMethod;
 import cn.nj.storm.shsf.core.annotation.RpcProviderService;
-import cn.nj.storm.shsf.core.entity.MethodConfig;
-import cn.nj.storm.shsf.core.entity.ServiceConfig;
-import org.apache.commons.collections4.CollectionUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.FieldAnnotationsScanner;
-import org.reflections.scanners.MethodAnnotationsScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -73,9 +64,7 @@ public class AnnotationUtils
         Reflections reflections = new Reflections(packageName);
         //获取服务提供者的列表
         Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(annotation);
-        List<T> providerServices =
-            classSet.stream().map(clazz -> clazz.getAnnotation(annotation)).collect(Collectors.toList());
-        return providerServices;
+        return classSet.stream().map(clazz -> clazz.getAnnotation(annotation)).collect(Collectors.toList());
     }
     
     /**
@@ -90,8 +79,6 @@ public class AnnotationUtils
         Reflections reflections = new Reflections(
             new ConfigurationBuilder().setScanners(new FieldAnnotationsScanner()).forPackages(packageName));
         Set<Field> fieldSet = reflections.getFieldsAnnotatedWith(RpcConsumerService.class);
-        List<T> consumerServices =
-            fieldSet.stream().map(field -> field.getAnnotation(annotation)).collect(Collectors.toList());
-        return consumerServices;
+        return fieldSet.stream().map(field -> field.getAnnotation(annotation)).collect(Collectors.toList());
     }
 }

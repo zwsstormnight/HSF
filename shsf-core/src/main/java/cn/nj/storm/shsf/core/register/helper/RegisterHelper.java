@@ -5,15 +5,13 @@ import cn.nj.storm.shsf.core.annotation.RpcMethod;
 import cn.nj.storm.shsf.core.annotation.RpcProviderService;
 import cn.nj.storm.shsf.core.entity.MethodConfig;
 import cn.nj.storm.shsf.core.entity.ServiceConfig;
-import cn.nj.storm.shsf.core.utill.AnnotationUtils;
-import cn.nj.storm.shsf.core.utill.Constants;
+import cn.nj.storm.shsf.core.utils.AnnotationUtils;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.collections4.Transformer;
+import org.apache.commons.lang.StringUtils;
 
-import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -68,7 +66,7 @@ public class RegisterHelper
             return serviceConfig;
         }).collect(Collectors.toList());
         serviceConfigs.put(RpcProviderService.SERVICE_TYPE, providerList);
-
+        
         List<ServiceConfig> consumerList = consumers.stream().map(rpcConsumerService -> {
             ServiceConfig serviceConfig = new ServiceConfig();
             serviceConfig.setServiceType(RpcConsumerService.SERVICE_TYPE);
@@ -127,54 +125,38 @@ public class RegisterHelper
         return CollectionUtils.isEmpty(annoedMethods) ? methodConfigSet : annoedMethods;
     }
     
-    //    private ServiceConfig convertAnnotationInfos(T annotation){
-    //
-    //    }
+    /**
+     * 解析注册节点的信息
+     * @param dataStr
+     */
+    public static ServiceConfig explainInfo(String dataStr)
+    {
+        if (StringUtils.isBlank(dataStr))
+        {
+            return null;
+        }
+        List<String> pathInfos = Splitter.on('&').trimResults().omitEmptyStrings().splitToList(dataStr);
+        ServiceConfig serviceConfig = new ServiceConfig();
+        for (String info : pathInfos)
+        {
+            List<String> pairs = Splitter.on('=').trimResults().omitEmptyStrings().splitToList(info);
+            Field field;
+            try
+            {
+                field = ServiceConfig.class.getDeclaredField(pairs.get(0));
+                field.setAccessible(true);
+                field.set(serviceConfig, pairs.get(1));
+            }
+            catch (NoSuchFieldException e)
+            {
+                e.printStackTrace();
+            }
+            catch (IllegalAccessException ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+        return serviceConfig;
+    }
     
-    //转换
-    //    Transformer<RpcProviderService,ServiceConfig> providerConvert = rpcProviderService -> {
-    //        ServiceConfig serviceConfig = new ServiceConfig();
-    //        //接口类别
-    //        serviceConfig.setServiceType(RpcProviderService.SERVICE_TYPE);
-    //        //接口名称
-    //        serviceConfig.setInterfaceName(rpcProviderService.interfaceClass().getName());
-    //        //接口代理名称
-    //        serviceConfig.setName(rpcProviderService.name());
-    //        //接口类
-    //        serviceConfig.setInterfaceClass(rpcProviderService.interfaceClass());
-    //        //实现类
-    //        serviceConfig.setImplementClass(rpcProviderService.value());
-    //        serviceConfig.setRetries(rpcProviderService.retries());
-    //        serviceConfig.setTimeout(rpcProviderService.timeout());
-    //        return serviceConfig;
-    //    };
-    //    List<ServiceConfig> providerList = ListUtils.transformedList(providers,providerConvert);
-    
-    //    for (RpcProviderService rpcProviderService : providers)
-    //    {
-    //        ServiceConfig serviceConfig = new ServiceConfig();
-    //        //接口类别
-    //        serviceConfig.setServiceType(RpcProviderService.SERVICE_TYPE);
-    //        //接口名称
-    //        serviceConfig.setInterfaceName(rpcProviderService.interfaceClass().getName());
-    //        //接口代理名称
-    //        serviceConfig.setName(rpcProviderService.name());
-    //        //接口类
-    //        serviceConfig.setInterfaceClass(rpcProviderService.interfaceClass());
-    //        //实现类
-    //        serviceConfig.setImplementClass(rpcProviderService.value());
-    //        serviceConfig.setRetries(rpcProviderService.retries());
-    //        serviceConfig.setTimeout(rpcProviderService.timeout());
-    //    }
-//    for(RpcConsumerService rpcConsumerService:consumers)
-//    {
-//        ServiceConfig serviceConfig = new ServiceConfig();
-//        serviceConfig.setServiceType(RpcConsumerService.SERVICE_TYPE);
-//        serviceConfig.setName(rpcConsumerService.name());
-//        //接口类
-//        serviceConfig.setInterfaceClass(rpcConsumerService.interfaceClass());
-//        serviceConfig.setInterfaceName(rpcConsumerService.interfaceClass().getName());
-//        serviceConfig.setRetries(rpcConsumerService.retries());
-//        serviceConfig.setTimeout(rpcConsumerService.timeout());
-//    }
 }

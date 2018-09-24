@@ -2,12 +2,7 @@ package cn.nj.storm.shsf.core.register.factory;
 
 import cn.nj.storm.shsf.core.register.RegisterService;
 import cn.nj.storm.shsf.core.register.IRegisterFactory;
-import cn.nj.storm.shsf.core.register.impl.ClusterRegisterService;
-import cn.nj.storm.shsf.core.register.impl.EurekaRegisterService;
-import cn.nj.storm.shsf.core.register.impl.SimpleRegisterService;
-import cn.nj.storm.shsf.core.register.impl.ZkRegisterService;
-import cn.nj.storm.shsf.core.utill.Constants;
-import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;

@@ -1,13 +1,14 @@
 package cn.nj.storm.shsf.core.register.impl;
 
 import cn.nj.storm.shsf.core.conf.register.ShsfProperties;
-import cn.nj.storm.shsf.core.utill.Constants;
+import cn.nj.storm.shsf.core.entity.CuratorListenerResult;
+import cn.nj.storm.shsf.core.entity.ServiceConfig;
+import cn.nj.storm.shsf.core.utils.Constants;
+import cn.nj.storm.shsf.core.utils.CuratorUtils;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Service(value = Constants.ZOOKEEPER)
 @Slf4j
-public class ZkRegisterService extends AbstractRegisterService
+public class ZkRegisterService extends AbstractRegisterService implements LoggerInterface
 {
     
     @Autowired
@@ -46,13 +46,10 @@ public class ZkRegisterService extends AbstractRegisterService
     @Override
     public String register(String appName, String appAddress)
     {
-        if (MapUtils.isEmpty(regMap))
-        {
-            return null;
-        }
         CuratorFramework curatorFramework = applicationContext.getBean(CuratorFramework.class);
-        regMap.forEach((serviceName, serviceValue) -> serviceValue.forEach((role, serviceDetail) -> {
-            String rolePath = "/" + serviceName + "/" + role;
+        //服务提供者注册到注册中心
+        services.get(Constants.PROVIDER).forEach(serviceValue -> {
+            String rolePath = "/" + serviceValue.getInterfaceName() + "/" + serviceValue.getServiceType();
             try
             {
                 if (curatorFramework.checkExists().forPath(rolePath) == null)
@@ -68,6 +65,8 @@ public class ZkRegisterService extends AbstractRegisterService
             {
                 e.printStackTrace();
             }
+            //拼接URL shsf://127.0.0.1:62338?interface=&retries=&timeout=&type=&methods=
+            String serviceDetail = serviceValue.toUrlParam();
             serviceDetail = shsfProperties.getProtocal() + "://"
                 + ObjectUtils.defaultIfNull(shsfProperties.getAddress(), appAddress) + ":" + shsfProperties.getPort()
                 + "?" + serviceDetail;
@@ -85,25 +84,11 @@ public class ZkRegisterService extends AbstractRegisterService
             {
                 e.printStackTrace();
             }
-        }));
-        //全量获取当前命名空间下的各个节点的信息
-        List<String> nodes = getTreeNodes(curatorFramework, getTreeNodes(curatorFramework, ""));
-        //如果下级节点不存在则查询节点的值
-        if (CollectionUtils.isNotEmpty(nodes))
-        {
-//            long count = nodes.stream().map(node -> {
-//                try {
-//                    String dataStr = new String(curatorFramework.getData().forPath(node));
-//                    cache(TreeCacheEvent.Type.NODE_ADDED, node, dataStr);
-//                    return 1;
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                return 0;
-//            }).count();
-//            System.out.println(count);
-        }
-        System.out.println(totalServices);
+        });
+        //服务消费者监听注册中心
+        listenConsumerServices(curatorFramework);
+        //TODO        SimpleRegisterService.cache(result.getType(), result.getPath(), result.getData());
+        //TODO  消费者构建动态代理
         return null;
     }
     
@@ -135,15 +120,18 @@ public class ZkRegisterService extends AbstractRegisterService
         System.out.println(paths);
         List<String> nodes = Lists.newArrayList();
         List<String> temp = Lists.newArrayList();
-        for(String path : paths){
+        for (String path : paths)
+        {
             List<String> list = getTreeNodes(curatorFramework, path);
-            if(CollectionUtils.isEmpty(list)){
+            if (CollectionUtils.isEmpty(list))
+            {
                 temp.add(path);
                 continue;
             }
             nodes.addAll(list);
         }
-        if(CollectionUtils.isNotEmpty(nodes)){
+        if (CollectionUtils.isNotEmpty(nodes))
+        {
             nodes.addAll(temp);
             return getTreeNodes(curatorFramework, nodes);
         }
@@ -153,5 +141,40 @@ public class ZkRegisterService extends AbstractRegisterService
     private static Map<String, Object> getTreeNodes(CuratorFramework curatorFramework, Map<String, Object> nodes)
     {
         return nodes;
+    }
+    
+    public static void getServicesInNamespace(CuratorFramework curatorFramework)
+    {
+        //全量获取当前命名空间下的各个节点的信息
+        List<String> nodes = getTreeNodes(curatorFramework, getTreeNodes(curatorFramework, ""));
+        //如果下级节点不存在则查询节点的值
+        if (CollectionUtils.isNotEmpty(nodes))
+        {
+            long count = nodes.stream().map(node -> {
+                try
+                {
+                    String dataStr = new String(curatorFramework.getData().forPath(node));
+                    cache(TreeCacheEvent.Type.NODE_ADDED, node, dataStr);
+                    return 1;
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                return 0;
+            }).count();
+            System.out.println(count);
+        }
+    }
+    
+    private static List<CuratorListenerResult> listenConsumerServices(CuratorFramework curatorFramework)
+    {
+        if (CollectionUtils.isEmpty(consumerPaths))
+        {
+            return null;
+        }
+        return consumerPaths.stream()
+            .map(path -> CuratorUtils.setTreeCacheListener(curatorFramework, path))
+            .collect(Collectors.toList());
     }
 }

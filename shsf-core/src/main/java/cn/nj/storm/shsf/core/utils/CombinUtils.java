@@ -1,4 +1,4 @@
-package cn.nj.storm.shsf.core.utill;
+package cn.nj.storm.shsf.core.utils;
 
 /**
  * <组合工具类>

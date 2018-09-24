@@ -1,7 +1,7 @@
 package cn.nj.storm;
 
 import cn.nj.storm.shsf.core.annotation.AutoShsfConfiguration;
-import cn.nj.storm.shsf.core.utill.Constants;
+import cn.nj.storm.shsf.core.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;

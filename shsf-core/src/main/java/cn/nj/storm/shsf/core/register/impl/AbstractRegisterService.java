@@ -4,11 +4,12 @@ import cn.nj.storm.shsf.core.entity.MethodConfig;
 import cn.nj.storm.shsf.core.entity.ServiceConfig;
 import cn.nj.storm.shsf.core.register.RegisterService;
 import cn.nj.storm.shsf.core.register.helper.RegisterHelper;
-import cn.nj.storm.shsf.core.utill.Constants;
-import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.core.utils.Constants;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -16,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,7 @@ import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NOD
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
+@Slf4j
 public abstract class AbstractRegisterService implements RegisterService, LoggerInterface
 {
     
@@ -38,23 +41,20 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
     protected String appAddress;
     
     /**
-     * 注册中心的全量接口信息
+     * 存储当前订阅的接口的提供者的列表，方便在消费端做负载均衡
+     * 如：
+     * key= cn.nj.storm.shsf.app.api.service.IHappyService
+     * value= [192.168.0.1:20881,192.168.0.2:20881,192.168.0.3:20881]
      */
-    public static Map<String, List<Map<String, Object>>> totalServices = Maps.newHashMap();
+    protected static ConcurrentMap<String, List<String>> consumersMap;
     
     /**
-     * 本地服务存储位置
-     * key: interfaceName
-     * ---cn.nj.storm.shsf.app.api.service.IHappyService
-     * value: type -> interfaceInfo
-     * ---provider -> interface=cn.nj.storm.shsf.app.api.service.IHappyService&retries=3&timeout=3000&type=provider&methods=[makeHappy, happyName]
+     * 订阅接口的路径
      */
-    protected static Map<String, Map<String, String>> regMap;
-    
-    protected static Map<String, Map<String, String>> consumerMap;
+    protected static List<String> consumerPaths;
     
     /**
-     * 本地服务的存储位置
+     * 已扫描的本地服务的存储位置
      */
     protected static Map<String, List<ServiceConfig>> services;
     
@@ -73,19 +73,19 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
         {
             return this;
         }
+        //对需要发布的服务扫描可用的方法
         serviceMethods = RegisterHelper.scannerMethods(services.get(Constants.PROVIDER));
-        regMap = Maps.newHashMap();
-        for (ServiceConfig service : services.get(Constants.PROVIDER))
+        //对需要订阅的服务初始化本地容器
+        List<ServiceConfig> consumerServices = services.get(Constants.CONSUMER);
+        if (CollectionUtils.isNotEmpty(consumerServices))
         {
-            //接口全名
-            String serviceName = service.getInterfaceName();
-            //拼接URL shsf://127.0.0.1:62338?interface=&retries=&timeout=&type=&methods=
-            String params = service.toUrlParam() + "&methods="
-                + Lists.transform(serviceMethods.get(service.getName()).stream().collect(Collectors.toList()),
-                    methodConfig -> methodConfig.getName()).toString();
-            Map<String, String> typeMap = Maps.newHashMap();
-            typeMap.put(service.getServiceType(), params);
-            regMap.put(serviceName, typeMap);
+            consumersMap = Maps.newConcurrentMap();
+            //转化获取所有消费接口的注册路径
+            consumerPaths = consumerServices.stream().map(consumer -> {
+                consumersMap.put(consumer.getInterfaceName(), Lists.newArrayList());
+                String path = "/" + consumer.getInterfaceName() + "/" + Constants.PROVIDER;
+                return path;
+            }).collect(Collectors.toList());
         }
         return this;
     }
@@ -93,13 +93,13 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
     @Override
     public String register(String appName, String appAddress)
     {
-        return regMap.toString();
+        return null;
     }
     
     /**
-     * 事件发生类别
      *
-     * @param type
+     *
+     * @param type 事件发生类别
      * @param path
      * @param dataStr
      */
@@ -117,37 +117,33 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
         }
         //接口名
         String interfaceName = pathNodes.get(0);
-        //接口提供方ip
+        //服务提供方ip
         String serverAddress = pathNodes.get(pathNodes.size() - 1);
-        //服务提供者信息
-        List<Map<String, Object>> existsInfos =
-            ListUtils.defaultIfNull(totalServices.get(interfaceName), Lists.newArrayList());
-        Predicate<Map<String, Object>> isInServer = (map) -> map.containsKey(serverAddress);
+        List<String> existsServers = ListUtils.defaultIfNull(consumersMap.get(interfaceName), Lists.newArrayList());
         //服务列表不为空并且是删除操作
-        if (type.equals(NODE_REMOVED))
+        if (type.equals(NODE_REMOVED) && CollectionUtils.isNotEmpty(existsServers))
         {
-            existsInfos.removeAll(existsInfos.stream().filter(isInServer).collect(Collectors.toList()));
+            existsServers.remove(serverAddress);
+            System.out.println(consumersMap);
         }
         else
         {
+            if (!existsServers.contains(serverAddress))
+            {
+                existsServers.add(serverAddress);
+            }
             List<String> pathInfos = Splitter.on('?').trimResults().omitEmptyStrings().splitToList(dataStr);
             System.out.println(pathInfos);
-            Map<String, Object> m = Maps.newHashMap();
-            m.put(serverAddress, pathInfos);
-            existsInfos.add(m);
+            Predicate<ServiceConfig> isInServer = (config) -> config.toUrlParam().equals(pathInfos.get(1));
+            synchronized (services)
+            {
+                if (services.get(path).stream().filter(isInServer).collect(Collectors.toList()).isEmpty())
+                {
+                    services.get(path).add(RegisterHelper.explainInfo(pathInfos.get(1)));
+                }
+            }
         }
-        //TODO 解析接口详细信息
-        totalServices.put(interfaceName, existsInfos);
-        System.out.println(totalServices);
-    }
-    
-    /**
-     * 解析注册节点的信息
-     * @param dataStr
-     */
-    private Object explainInfo(String dataStr)
-    {
-        //TODO
-        return null;
+        consumersMap.put(interfaceName, existsServers);
+        System.out.println(consumersMap);
     }
 }

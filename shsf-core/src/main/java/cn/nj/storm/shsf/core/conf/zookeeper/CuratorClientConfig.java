@@ -1,12 +1,13 @@
 package cn.nj.storm.shsf.core.conf.zookeeper;
 
 import cn.nj.storm.shsf.core.register.impl.SimpleRegisterService;
-import cn.nj.storm.shsf.core.utill.Constants;
-import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.core.utils.Constants;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.ChildData;
+import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * <一句话功能简述>
+ * <Curator连接装配>
  * <功能详细描述>
  *
  * @author zhengweishun
@@ -58,7 +59,6 @@ public class CuratorClientConfig implements LoggerInterface
         System.out.println("zk client start successfully!");
         connectionState = "CONNECTED";
         addListener(client, retryPolicy, properties);
-        setTreeCacheListenter(client);
         return client;
     }
     
@@ -95,37 +95,5 @@ public class CuratorClientConfig implements LoggerInterface
                 connectionState = "READ_ONLY";
             }
         });
-    }
-    
-    /**
-     * 订阅默认空间的目录
-     * @param client
-     */
-    private void setTreeCacheListenter(CuratorFramework client)
-    {
-        //设置节点的cache
-        TreeCache treeCache = new TreeCache(client, "/");
-        //设置监听器和处理过程
-        treeCache.getListenable().addListener((client1, event) -> {
-            ChildData data = event.getData();
-            if (data != null)
-            {
-                String dataStr = data.getData() != null ? new String(data.getData()) : "";
-                System.out.println(event.getType() + ": " + data.getPath() + "  数据:" + dataStr);
-                SimpleRegisterService.cache(event.getType(), data.getPath(), dataStr);
-            }
-            else
-            {
-                System.out.println("data is null : " + event.getType());
-            }
-        });
-        try
-        {
-            treeCache.start();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 }

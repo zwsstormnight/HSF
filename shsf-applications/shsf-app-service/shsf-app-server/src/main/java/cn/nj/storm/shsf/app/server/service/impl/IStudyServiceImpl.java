@@ -2,7 +2,7 @@ package cn.nj.storm.shsf.app.server.service.impl;
 
 import cn.nj.storm.shsf.app.api.service.IStudyService;
 import cn.nj.storm.shsf.core.annotation.RpcProviderService;
-import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 
 /**
  * <一句话功能简述>

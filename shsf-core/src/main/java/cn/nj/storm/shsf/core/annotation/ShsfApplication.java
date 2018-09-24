@@ -1,7 +1,7 @@
 package cn.nj.storm.shsf.core.annotation;
 
 import cn.nj.storm.shsf.core.conf.register.ShsfAutoStarter;
-import cn.nj.storm.shsf.core.utill.Constants;
+import cn.nj.storm.shsf.core.utils.Constants;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

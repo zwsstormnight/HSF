@@ -1,6 +1,6 @@
 package cn.nj.storm.shsf.core.register.impl;
 
-import cn.nj.storm.shsf.core.utill.Constants;
+import cn.nj.storm.shsf.core.utils.Constants;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,6 +17,6 @@ public class EurekaRegisterService extends AbstractRegisterService {
 
     @Override
     public String register(String appName, String appAddress) {
-        return regMap.toString();
+        return null;
     }
 }

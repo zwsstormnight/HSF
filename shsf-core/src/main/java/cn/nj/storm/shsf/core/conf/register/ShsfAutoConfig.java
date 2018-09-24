@@ -1,11 +1,9 @@
 package cn.nj.storm.shsf.core.conf.register;
 
 import cn.nj.storm.shsf.core.annotation.AutoShsfConfiguration;
-import cn.nj.storm.shsf.core.register.IRegisterFactory;
 import cn.nj.storm.shsf.core.register.RegisterService;
 import cn.nj.storm.shsf.core.register.factory.AbstractRegisterFactory;
-import cn.nj.storm.shsf.core.register.impl.AbstractRegisterService;
-import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 import cn.nj.storm.shsf.rpc.RpcServerFactory;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +46,7 @@ public class ShsfAutoConfig implements LoggerInterface {
                 RegisterService registerService = (RegisterService) applicationContext.getBean(conf.centre());
                 //扫描
                 registerService.scanner(startClass.getPackage().getName());
-                //注册到注册中心
+                //将发布提供的服务注册到注册中心，并监听需要监听的服务
                 registerService.register(conf.name(), AbstractRegisterFactory.getLocalInetAddress().getHostAddress());
                 //启动服务模式：netty/mina/rmi
                 RpcServerFactory factory = new RpcServerFactory();

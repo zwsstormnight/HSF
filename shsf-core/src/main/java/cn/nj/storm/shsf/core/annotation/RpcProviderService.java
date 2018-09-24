@@ -1,7 +1,6 @@
 package cn.nj.storm.shsf.core.annotation;
 
-import cn.nj.storm.shsf.core.utill.Constants;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+import cn.nj.storm.shsf.core.utils.Constants;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;

@@ -1,6 +1,6 @@
 package cn.nj.storm.shsf.core.conf.register;
 
-import cn.nj.storm.shsf.core.utill.Constants;
+import cn.nj.storm.shsf.core.utils.Constants;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

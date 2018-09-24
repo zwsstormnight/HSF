@@ -1,7 +1,6 @@
 package cn.nj.storm.shsf.core.annotation;
 
-import cn.nj.storm.shsf.core.utill.Constants;
-import org.springframework.stereotype.Component;
+import cn.nj.storm.shsf.core.utils.Constants;
 
 import java.lang.annotation.*;
 

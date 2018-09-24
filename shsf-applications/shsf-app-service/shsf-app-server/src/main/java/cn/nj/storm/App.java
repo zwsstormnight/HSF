@@ -1,9 +1,8 @@
 package cn.nj.storm;
 
 import cn.nj.storm.shsf.core.annotation.AutoShsfConfiguration;
-import cn.nj.storm.shsf.core.annotation.ShsfApplication;
-import cn.nj.storm.shsf.core.utill.Constants;
-import cn.nj.storm.shsf.core.utill.LoggerInterface;
+import cn.nj.storm.shsf.core.utils.Constants;
+import cn.nj.storm.shsf.core.utils.LoggerInterface;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
