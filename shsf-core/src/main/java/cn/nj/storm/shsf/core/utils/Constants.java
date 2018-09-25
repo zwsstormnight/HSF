@@ -25,37 +25,37 @@ public interface Constants
      * 默认名称
      */
     String SHSF_NAME = "shsf";
-
+    
     /**
      * 默认协议
      */
     String SHSF_PROTOCAL = "shsf";
-
+    
     /**
      * 本地 不做注册机制
      */
     String LOCAL = "Local";
-
+    
     /**
      * 数据库注册
      */
     String DB = "Database";
-
+    
     /**
      * zookeeper注册
      */
     String ZOOKEEPER = "Zookeeper";
-
+    
     /**
      * redis注册
      */
     String REDIS = "Redis";
-
+    
     /**
      * Eureka注册
      */
     String EUREKA = "Eureka";
-
+    
     /**
      * 无中心化
      */
@@ -67,22 +67,41 @@ public interface Constants
     enum CENTRE_TYPE
     {
         LOCAL("local");
-
+        
         CENTRE_TYPE(String code)
         {
             this.code = code;
         }
-
+        
         private String code;
-
+        
         public String getCode()
         {
             return code;
         }
-
+        
     }
-
+    
     String PROVIDER = "provider";
-
+    
     String CONSUMER = "consumer";
+    
+    /**
+     * 服务角色类别
+     */
+    enum SERVICE_ROLE_TYPE
+    {
+        SERVICE_PROVIDER(PROVIDER), SERVICE_CONSUMER(CONSUMER);
+        SERVICE_ROLE_TYPE(String code)
+        {
+            this.code = code;
+        }
+        
+        private String code;
+        
+        public String getCode()
+        {
+            return code;
+        }
+    }
 }

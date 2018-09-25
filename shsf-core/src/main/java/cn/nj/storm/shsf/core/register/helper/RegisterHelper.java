@@ -6,6 +6,7 @@ import cn.nj.storm.shsf.core.annotation.RpcProviderService;
 import cn.nj.storm.shsf.core.entity.MethodConfig;
 import cn.nj.storm.shsf.core.entity.ServiceConfig;
 import cn.nj.storm.shsf.core.utils.AnnotationUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
@@ -135,27 +136,8 @@ public class RegisterHelper
         {
             return null;
         }
-        List<String> pathInfos = Splitter.on('&').trimResults().omitEmptyStrings().splitToList(dataStr);
-        ServiceConfig serviceConfig = new ServiceConfig();
-        for (String info : pathInfos)
-        {
-            List<String> pairs = Splitter.on('=').trimResults().omitEmptyStrings().splitToList(info);
-            Field field;
-            try
-            {
-                field = ServiceConfig.class.getDeclaredField(pairs.get(0));
-                field.setAccessible(true);
-                field.set(serviceConfig, pairs.get(1));
-            }
-            catch (NoSuchFieldException e)
-            {
-                e.printStackTrace();
-            }
-            catch (IllegalAccessException ex)
-            {
-                ex.printStackTrace();
-            }
-        }
+        List<String> pairs = Splitter.on('=').trimResults().omitEmptyStrings().splitToList(dataStr);
+        ServiceConfig serviceConfig = JSONObject.parseObject(pairs.get(1),ServiceConfig.class);
         return serviceConfig;
     }
     

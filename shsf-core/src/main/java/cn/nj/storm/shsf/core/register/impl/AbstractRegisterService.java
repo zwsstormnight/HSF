@@ -66,12 +66,12 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
     protected static Map<String, Set<MethodConfig>> serviceMethods;
     
     @Override
-    public RegisterService scanner(String packageName)
+    public Map<String, List<ServiceConfig>> scanner(String packageName)
     {
         services = RegisterHelper.scannerInterfaces(packageName);
         if (MapUtils.isEmpty(services))
         {
-            return this;
+            return services;
         }
         //对需要发布的服务扫描可用的方法
         serviceMethods = RegisterHelper.scannerMethods(services.get(Constants.PROVIDER));
@@ -87,17 +87,17 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
                 return path;
             }).collect(Collectors.toList());
         }
-        return this;
+        return services;
     }
     
     @Override
-    public String register(String appName, String appAddress)
+    public ConcurrentMap<String, List<String>> register(String appName, String appAddress)
     {
-        return null;
+        return consumersMap;
     }
     
     /**
-     *
+     * 将监听注册中心的结果缓存到本地
      *
      * @param type 事件发生类别
      * @param path
@@ -105,10 +105,6 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
      */
     public static void cache(TreeCacheEvent.Type type, String path, String dataStr)
     {
-        if (StringUtils.isBlank(dataStr))
-        {
-            return;
-        }
         //拆解当前的路径
         List<String> pathNodes = Splitter.on('/').trimResults().omitEmptyStrings().splitToList(path);
         if (!pathNodes.contains(Constants.PROVIDER))
@@ -128,22 +124,26 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
         }
         else
         {
+            if (StringUtils.isBlank(dataStr))
+            {
+                return;
+            }
             if (!existsServers.contains(serverAddress))
             {
                 existsServers.add(serverAddress);
             }
             List<String> pathInfos = Splitter.on('?').trimResults().omitEmptyStrings().splitToList(dataStr);
-            System.out.println(pathInfos);
             Predicate<ServiceConfig> isInServer = (config) -> config.toUrlParam().equals(pathInfos.get(1));
             synchronized (services)
             {
-                if (services.get(path).stream().filter(isInServer).collect(Collectors.toList()).isEmpty())
+                List<ServiceConfig> serviceConfigList =
+                    ListUtils.defaultIfNull(services.get(path), Lists.newArrayList());
+                if (serviceConfigList.stream().filter(isInServer).collect(Collectors.toList()).isEmpty())
                 {
-                    services.get(path).add(RegisterHelper.explainInfo(pathInfos.get(1)));
+                    serviceConfigList.add(RegisterHelper.explainInfo(pathInfos.get(1)));
+                    services.put(path, serviceConfigList);
                 }
             }
         }
-        consumersMap.put(interfaceName, existsServers);
-        System.out.println(consumersMap);
     }
 }

@@ -20,6 +20,11 @@ public class CuratorListenerResult
         
     }
     
+    public CuratorListenerResult(TreeCacheEvent.Type type)
+    {
+        this.type = type;
+    }
+    
     public CuratorListenerResult(TreeCacheEvent.Type type, String path, String data)
     {
         this.type = type;

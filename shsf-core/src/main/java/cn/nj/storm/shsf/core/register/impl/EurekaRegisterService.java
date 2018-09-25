@@ -3,6 +3,9 @@ package cn.nj.storm.shsf.core.register.impl;
 import cn.nj.storm.shsf.core.utils.Constants;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * <eureka注册业务类>
  * <功能详细描述>
@@ -16,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class EurekaRegisterService extends AbstractRegisterService {
 
     @Override
-    public String register(String appName, String appAddress) {
-        return null;
+    public ConcurrentMap<String, List<String>> register(String appName, String appAddress) {
+        return consumersMap;
     }
 }

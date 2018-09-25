@@ -1,5 +1,6 @@
 package cn.nj.storm.shsf.core.entity;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.collect.Lists;
 import lombok.Builder;
@@ -25,16 +26,16 @@ public class ServiceConfig implements Serializable
 {
     @JSONField(name = "type")
     private String serviceType;
-
+    
     @JSONField(name = "name")
     private String name;
     
     @JSONField(name = "interface")
     private String interfaceName;
-
+    
     @JSONField(serialize = false, deserialize = false)
     private Class<?> interfaceClass;
-
+    
     @JSONField(serialize = false, deserialize = false)
     private Class<?> implementClass;
     
@@ -71,7 +72,22 @@ public class ServiceConfig implements Serializable
      */
     public String toUrlParam()
     {
-        return "interface=" + interfaceName + "&retries=" + retries + "&timeout=" + timeout + "&type=" + serviceType
-            + "&methods=" + this.methodNames.toString();
+        String urlParam =
+            "interface=" + interfaceName + "&retries=" + retries + "&timeout=" + timeout + "&type=" + serviceType;
+        if (CollectionUtils.isNotEmpty(this.methodNames))
+        {
+            urlParam += "&methods=" + this.methodNames.toString();
+        }
+        return urlParam;
+    }
+    
+    /**
+     * 将当前类json序列化
+     * @return
+     */
+    public String toJsonParam()
+    {
+        String urlParam = "data=" + JSON.toJSONString(this);
+        return urlParam;
     }
 }
