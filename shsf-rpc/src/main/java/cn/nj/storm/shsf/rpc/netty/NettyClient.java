@@ -1,5 +1,6 @@
 package cn.nj.storm.shsf.rpc.netty;
 
+import cn.nj.storm.shsf.rpc.AbstractRpcClient;
 import cn.nj.storm.shsf.rpc.netty.handler.client.ClientReadHandler;
 import cn.nj.storm.shsf.rpc.netty.handler.client.ClientWriteHandler;
 import io.netty.bootstrap.Bootstrap;
@@ -14,6 +15,7 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 /**
  * <一句话功能简述>
@@ -24,12 +26,14 @@ import java.net.InetSocketAddress;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class NettyClient
+public class NettyClient extends AbstractRpcClient
 {
     
     private String address;
     
     private Integer port;
+    
+    private SocketAddress remoteAddress;
     
     public NettyClient()
     {
@@ -40,6 +44,7 @@ public class NettyClient
     {
         this.address = address;
         this.port = port;
+        remoteAddress = new InetSocketAddress(address, port);
     }
     
     public void start()
@@ -50,7 +55,7 @@ public class NettyClient
         {
             Bootstrap b = new Bootstrap().group(group);
             b.channel(NioSocketChannel.class)
-                .remoteAddress(new InetSocketAddress(address, port))
+                .remoteAddress(remoteAddress)
                 .handler(new ChannelInitializer<SocketChannel>()
                 {
                     @Override

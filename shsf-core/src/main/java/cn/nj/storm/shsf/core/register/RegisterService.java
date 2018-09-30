@@ -33,4 +33,16 @@ public interface RegisterService {
      * @return
      */
     ConcurrentMap<String, List<String>> register(String appName, String appAddress);
+
+    /**
+     *
+     * @return
+     */
+    Map<String, List<ServiceConfig>> getServiceCaches();
+
+    /**
+     *
+     * @return
+     */
+    ConcurrentMap<String, List<String>> getConsumerLists();
 }

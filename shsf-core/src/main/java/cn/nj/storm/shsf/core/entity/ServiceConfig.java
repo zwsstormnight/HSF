@@ -3,7 +3,6 @@ package cn.nj.storm.shsf.core.entity;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.collect.Lists;
-import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -30,8 +29,11 @@ public class ServiceConfig implements Serializable
     @JSONField(name = "name")
     private String name;
     
-    @JSONField(name = "interface")
+    @JSONField(name = "interfaceName")
     private String interfaceName;
+
+    @JSONField(name = "implementName")
+    private String implementName;
     
     @JSONField(serialize = false, deserialize = false)
     private Class<?> interfaceClass;

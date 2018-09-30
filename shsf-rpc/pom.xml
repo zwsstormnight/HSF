@@ -16,16 +16,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>${spring.boot.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.16</version>
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>cn.nj.storm</groupId>
+            <artifactId>shsf-common</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
         <!-- Protostuff -->
         <dependency>
             <groupId>io.protostuff</groupId>

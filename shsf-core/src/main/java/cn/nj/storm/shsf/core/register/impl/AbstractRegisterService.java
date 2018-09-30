@@ -95,6 +95,18 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
     {
         return consumersMap;
     }
+
+    @Override
+    public Map<String, List<ServiceConfig>> getServiceCaches()
+    {
+        return services;
+    }
+
+    @Override
+    public ConcurrentMap<String, List<String>> getConsumerLists()
+    {
+        return consumersMap;
+    }
     
     /**
      * 将监听注册中心的结果缓存到本地

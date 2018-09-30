@@ -29,7 +29,7 @@ public @interface RpcConsumerService {
      * 接口类别
      * @return
      */
-    Class<?> interfaceClass() default void.class;
+    Class<?> interfaceClass();
 
     /**
      * 接口版本
