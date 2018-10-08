@@ -22,6 +22,7 @@ public class ConsumerOne implements ShsfConsumer<String>
     
     public String pop()
     {
-        return stackStore.popInSafe();
+//        return stackStore.popInSafe();
+        return stackStore.popUnSafe();
     }
 }

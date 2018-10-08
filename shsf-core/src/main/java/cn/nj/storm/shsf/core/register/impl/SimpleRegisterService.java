@@ -12,5 +12,5 @@ package cn.nj.storm.shsf.core.register.impl;
 //@Service(value = Constants.LOCAL)
 public class SimpleRegisterService extends AbstractRegisterService
 {
-    
+    //TODO  向spring注册bean
 }

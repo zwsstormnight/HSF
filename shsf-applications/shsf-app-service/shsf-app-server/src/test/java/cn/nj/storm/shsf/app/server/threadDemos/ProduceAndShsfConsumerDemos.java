@@ -3,7 +3,6 @@ package cn.nj.storm.shsf.app.server.threadDemos;
 import cn.nj.storm.shsf.app.server.threadDemos.oneToOne.*;
 import org.junit.Test;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,13 +30,16 @@ public class ProduceAndShsfConsumerDemos
         ConsumerThread ct = new ConsumerThread(consumerOne);
         pt.start();
         ct.start();
-        try {
+        try
+        {
             Thread.sleep(100000L);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e)
+        {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * 一个生产者 一个消费者
      */
@@ -58,13 +60,16 @@ public class ProduceAndShsfConsumerDemos
         ct3.start();
         ct4.start();
         ct5.start();
-        try {
+        try
+        {
             Thread.sleep(100000L);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e)
+        {
             e.printStackTrace();
         }
     }
-
+    
     @Test
     public void n2one()
     {
@@ -81,13 +86,16 @@ public class ProduceAndShsfConsumerDemos
         pt5.start();
         ConsumerThread ct1 = new ConsumerThread(new ConsumerOne(stringStackStore));
         ct1.start();
-        try {
+        try
+        {
             Thread.sleep(100000L);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e)
+        {
             e.printStackTrace();
         }
     }
-
+    
     @Test
     public void n2n()
     {
@@ -112,10 +120,54 @@ public class ProduceAndShsfConsumerDemos
         ct3.start();
         ct4.start();
         ct5.start();
-        try {
+        try
+        {
             Thread.sleep(100000L);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e)
+        {
             e.printStackTrace();
         }
+    }
+    
+    @Test
+    public void dynamic()
+    {
+        StackStore<String> stringStackStore = new StackStore<>(10);
+        try
+        {
+            ConsumerThread ct1 = new ConsumerThread(new ConsumerOne(stringStackStore));
+            ct1.start();
+            for (int i = 0; i < 10; i++)
+            {
+                stringStackStore.pushUnsafe("" + i);
+                Thread.sleep(1000L);
+            }
+            Thread.sleep(100000L);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void main(String[] args)
+    {
+        Thread thread = Thread.currentThread();
+        System.out.println(thread.getName() + ":" + thread.isDaemon());
+        //        thread.setDaemon(true);
+        //        System.out.println(thread.getName()+":"+thread.isDaemon());
+        Thread t1 = new Thread(() -> {
+            System.out.println(".....!!!!");
+            try {
+                Thread.sleep(1000000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        t1.setDaemon(true);
+        t1.start();
+        System.out.println(t1.getName()+":"+t1.getState().name());
+        System.out.println("end...");
     }
 }
