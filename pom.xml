@@ -11,6 +11,8 @@
         <module>shsf-rpc</module>
         <module>shsf-common</module>
         <module>spring-boot-starter-shsf</module>
+        <module>shsf-spring-boot-starter</module>
+        <module>shsf-spring-boot-starter</module>
     </modules>
     <packaging>pom</packaging>
 

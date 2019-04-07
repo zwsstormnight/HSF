@@ -93,6 +93,7 @@ public abstract class AbstractRegisterService implements RegisterService, Logger
     @Override
     public ConcurrentMap<String, List<String>> register(String appName, String appAddress)
     {
+        //TODO 这里其实应该做spring的注册
         return consumersMap;
     }
 

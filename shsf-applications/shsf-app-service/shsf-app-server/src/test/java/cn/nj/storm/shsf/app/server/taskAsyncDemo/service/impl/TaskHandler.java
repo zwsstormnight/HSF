@@ -28,6 +28,7 @@ public class TaskHandler extends AbsTaskHandler
 {
     public static Logger logger = LoggerFactory.getLogger("run");
 
+    //TODO 这里需要考量阻塞队列
     public static ConcurrentLinkedQueue<TaskHandlerReq> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
 
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
